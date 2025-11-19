@@ -565,6 +565,30 @@
             font-size: 12px;
         }
 
+        /* ДИНАМИЧНЫЙ ЛИДЕРБОРД */
+        .user-highlight {
+            background: linear-gradient(45deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1)) !important;
+            border: 1px solid rgba(255,215,0,0.3) !important;
+        }
+
+        .leaderboard-item {
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateX(5px) scale(1.02);
+            background: rgba(255,255,255,0.15) !important;
+        }
+
+        @keyframes scoreUpdate {
+            0% { background-color: rgba(76, 175, 80, 0.3); }
+            100% { background-color: transparent; }
+        }
+
+        .score-update {
+            animation: scoreUpdate 1s ease;
+        }
+
         /* Скрытые секции */
         .section {
             display: none;
@@ -622,7 +646,7 @@
                 <div class="counter-progress">
                     <div class="counter-fill" id="counter-fill" style="width: 1%"></div>
                 </div>
-                <div style="font-size: 12px; opacity: 0.8;">При достижении 100 игроков - настоящий глобальный рейтинг!</div>
+                <div style="font-size: 12px; opacity: 0.8;">Вы первый игрок! Пригласите друзей для роста сообщества!</div>
             </div>
 
             <!-- Хедер с уровнем -->
@@ -923,6 +947,13 @@
             updateUI();
             updateRank();
             updateRealPlayersCounter();
+            
+            // Автообновление рейтинга каждые 30 секунд
+            setInterval(() => {
+                if (document.getElementById('leaderboard-section').classList.contains('active')) {
+                    updateLeaderboard();
+                }
+            }, 30000);
         }
         
         function setupEventListeners() {
@@ -1124,14 +1155,16 @@
 
         // СЧЕТЧИК РЕАЛЬНЫХ ИГРОКОВ
         function updateRealPlayersCounter() {
-            // В демо-режиме имитируем рост
-            realPlayersCount = Math.min(realPlayersCount + Math.floor(Math.random() * 3), 100);
+            // ПРАВДА: пока только вы один реальный игрок
+            realPlayersCount = 1;
             
             document.getElementById('real-players-count').textContent = realPlayersCount;
             document.getElementById('counter-fill').style.width = realPlayersCount + '%';
             
-            if (realPlayersCount >= 100) {
-                showNotification("🎉 Достигнуто 100 реальных игроков! Скоро настоящий рейтинг!");
+            // Честное сообщение
+            if (realPlayersCount === 1) {
+                document.querySelector('.player-counter div:last-child').textContent = 
+                    "Вы первый игрок! Пригласите друзей для роста сообщества!";
             }
         }
 
@@ -1266,7 +1299,7 @@
             document.getElementById('level-progress').style.width = progressPercent + '%';
         }
 
-        // ЛИДЕРБОРД
+        // ЛИДЕРБОРД - ДИНАМИЧЕСКАЯ ВЕРСИЯ
         function initializeLeaderboard(userId, userName) {
             const savedLeaderboard = localStorage.getItem('ton_tap_leaderboard');
             if (savedLeaderboard) {
@@ -1277,7 +1310,10 @@
                     id: userId,
                     name: userName,
                     score: calculateRankScore(),
-                    rank: currentRank
+                    rank: currentRank,
+                    lastActive: new Date(),
+                    isOnline: true,
+                    tapsPerSecond: 1
                 });
                 updateLeaderboard();
             }
@@ -1285,18 +1321,120 @@
 
         function generateDemoLeaderboard() {
             const demoPlayers = [];
-            const names = ['Alex', 'Maria', 'John', 'Anna', 'Mike', 'Sarah', 'David', 'Emma', 'James', 'Lisa'];
+            const names = ['Alex_TON', 'Crypto_Maria', 'John_Coin', 'Anna_Crypto', 'Mike_Block', 
+                           'Sarah_Chain', 'David_NFT', 'Emma_Wallet', 'James_Miner', 'Lisa_DeFi',
+                           'Max_Investor', 'Kate_Trader', 'Tom_Hodler', 'Luna_Moon', 'Sam_Satoshi',
+                           'Ruby_Gem', 'Leo_Diamond', 'Oscar_Gold', 'Eva_Silver', 'Noah_Platinum'];
+            
+            const currentTime = Date.now();
             
             for (let i = 0; i < 49; i++) {
+                const name = names[i % names.length] + getRandomEmoji();
+                
+                const baseScore = 10000 + Math.floor(Math.random() * 90000);
+                const timeFactor = Math.sin(currentTime / 1000000 + i) * 5000;
+                const activityFactor = Math.random() * 2000;
+                const score = Math.max(1000, baseScore + timeFactor + activityFactor);
+                
+                let rank = 'BRONZE';
+                for (const [r, data] of Object.entries(rankSystem)) {
+                    if (score >= data.minScore) {
+                        rank = r;
+                    }
+                }
+                
+                const lastActive = new Date(currentTime - Math.random() * 7 * 24 * 60 * 60 * 1000);
+                
                 demoPlayers.push({
                     id: 'demo_' + i,
-                    name: names[i % names.length] + (Math.floor(i / names.length) + 1),
-                    score: Math.floor(Math.random() * 100000) + 1000,
-                    rank: Object.keys(rankSystem)[Math.floor(Math.random() * Object.keys(rankSystem).length)]
+                    name: name,
+                    score: Math.floor(score),
+                    rank: rank,
+                    lastActive: lastActive,
+                    isOnline: Math.random() > 0.7,
+                    tapsPerSecond: 1 + Math.random() * 10
                 });
             }
             
             return demoPlayers.sort((a, b) => b.score - a.score).slice(0, MAX_LEADERBOARD_SIZE - 1);
+        }
+
+        function getRandomEmoji() {
+            const emojis = [' 💎', ' 🚀', ' ⭐', ' 🔥', ' 💰', ' 🏆', ' 🌟', ' ✨', ' ⚡', ' 🎯'];
+            return emojis[Math.floor(Math.random() * emojis.length)];
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+            
+            updateBotActivity();
+            
+            leaderboard.forEach((player, index) => {
+                const rankData = rankSystem[player.rank] || rankSystem.BRONZE;
+                const isUser = tg.initDataUnsafe.user && player.id === tg.initDataUnsafe.user.id;
+                
+                const item = document.createElement('div');
+                item.className = `leaderboard-item ${index < 3 ? 'rank-' + (index + 1) : ''} ${isUser ? 'user-highlight' : ''}`;
+                
+                const timeAgo = getTimeAgo(player.lastActive);
+                
+                item.innerHTML = `
+                    <div class="leaderboard-rank">
+                        ${index + 1}
+                        ${player.isOnline ? '<span style="color: #4CAF50; font-size: 8px;">●</span>' : ''}
+                    </div>
+                    <div class="leaderboard-player">
+                        <div>
+                            <span class="${rankData.class}">${player.name}</span>
+                            ${isUser ? '<span style="color: #ffd93d; margin-left: 5px;">(Вы)</span>' : ''}
+                        </div>
+                        <div style="font-size: 10px; opacity: 0.7;">
+                            ${player.isOnline ? '🟢 Онлайн' : `⏱️ Был ${timeAgo}`}
+                            • ${player.tapsPerSecond.toFixed(1)}/сек
+                        </div>
+                    </div>
+                    <div class="leaderboard-score">${player.score.toLocaleString()}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function updateBotActivity() {
+            const now = new Date();
+            leaderboard.forEach(player => {
+                if (player.id.startsWith('demo_')) {
+                    if (Math.random() > 0.95) {
+                        player.isOnline = !player.isOnline;
+                    }
+                    
+                    if (player.isOnline && Math.random() > 0.7) {
+                        player.score += Math.floor(player.tapsPerSecond * (1 + Math.random()));
+                        player.lastActive = new Date();
+                        
+                        for (const [rank, data] of Object.entries(rankSystem)) {
+                            if (player.score >= data.minScore) {
+                                player.rank = rank;
+                            }
+                        }
+                    }
+                }
+            });
+            
+            leaderboard.sort((a, b) => b.score - a.score);
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return 'только что';
+            if (minutes < 60) return `${minutes} мин назад`;
+            if (hours < 24) return `${hours} ч назад`;
+            return `${days} д назад`;
         }
 
         function updateLeaderboard() {
@@ -1309,12 +1447,17 @@
             if (userIndex !== -1) {
                 leaderboard[userIndex].score = userScore;
                 leaderboard[userIndex].rank = currentRank;
+                leaderboard[userIndex].lastActive = new Date();
+                leaderboard[userIndex].isOnline = true;
             } else {
                 leaderboard.push({
                     id: user.id,
                     name: user.first_name || 'Игрок',
                     score: userScore,
-                    rank: currentRank
+                    rank: currentRank,
+                    lastActive: new Date(),
+                    isOnline: true,
+                    tapsPerSecond: tapPower
                 });
             }
             
@@ -1323,26 +1466,6 @@
             
             localStorage.setItem('ton_tap_leaderboard', JSON.stringify(leaderboard));
             renderLeaderboard();
-        }
-
-        function renderLeaderboard() {
-            const list = document.getElementById('leaderboard-list');
-            list.innerHTML = '';
-            
-            leaderboard.forEach((player, index) => {
-                const rankData = rankSystem[player.rank] || rankSystem.BRONZE;
-                const item = document.createElement('div');
-                item.className = `leaderboard-item ${index < 3 ? 'rank-' + (index + 1) : ''}`;
-                item.innerHTML = `
-                    <div class="leaderboard-rank">${index + 1}</div>
-                    <div class="leaderboard-player">
-                        <span class="${rankData.class}">${player.name}</span>
-                        <div class="rank-badge ${rankData.badgeClass}">${rankData.badge} ${rankData.name}</div>
-                    </div>
-                    <div class="leaderboard-score">${player.score.toLocaleString()}</div>
-                `;
-                list.appendChild(item);
-            });
         }
 
         // ПАССИВНЫЙ ДОХОД
