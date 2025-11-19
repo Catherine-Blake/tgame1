@@ -160,7 +160,7 @@
             100% { transform: translateY(-80px) scale(0); opacity: 0; }
         }
         
-        /* Статистика */
+        /* Статистика - ТЕПЕРЬ ПОНЯТНАЯ! */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -170,12 +170,18 @@
         
         .stat-card {
             background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 15px;
+            padding: 12px;
+            border-radius: 12px;
             text-align: center;
             font-size: 14px;
             border: 1px solid rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 4px;
         }
         
         /* Улучшения */
@@ -236,7 +242,7 @@
             box-shadow: none;
         }
         
-        /* Кнопка приглашения - ТЕПЕРЬ С TELEGRAM SHARE */
+        /* Кнопка приглашения */
         .invite-section {
             background: linear-gradient(135deg, #667eea, #764ba2);
             padding: 20px;
@@ -303,6 +309,26 @@
             margin-right: 12px;
             min-width: 30px;
         }
+        
+        /* Анимация пассивного дохода */
+        .passive-income-effect {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            animation: slideIn 0.5s ease-out;
+            z-index: 1000;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -327,19 +353,23 @@
             </div>
         </div>
         
-        <!-- Статистика -->
+        <!-- СТАТИСТИКА - ТЕПЕРЬ ПОНЯТНАЯ! -->
         <div class="stats-grid">
             <div class="stat-card">
-                ⚡ Сила: <span id="tap-power">1</span>
+                <div>⚡ Сила тапа</div>
+                <div class="stat-value" id="tap-power">1</div>
             </div>
             <div class="stat-card">
-                👆 Тапов: <span id="total-taps">0</span>
+                <div>👆 Всего тапов</div>
+                <div class="stat-value" id="total-taps">0</div>
             </div>
             <div class="stat-card">
-                ⏱️/сек: <span id="passive-income">0</span>
+                <div>🤖 Автокликеры</div>
+                <div class="stat-value" id="auto-clickers">0</div>
             </div>
             <div class="stat-card">
-                🏆 Ранг: <span id="rank">Новичок</span>
+                <div>💰 В секунду</div>
+                <div class="stat-value" id="income-per-second">0</div>
             </div>
         </div>
         
@@ -356,7 +386,7 @@
             <div class="upgrade-item">
                 <div class="upgrade-info">
                     <div class="upgrade-name">⚡ Автокликер</div>
-                    <div class="upgrade-desc">1 монета/сек автоматически</div>
+                    <div class="upgrade-desc">+1 монета в секунду</div>
                 </div>
                 <button class="upgrade-btn" id="upgrade-auto" data-cost="100">100 💎</button>
             </div>
@@ -369,7 +399,7 @@
             </div>
         </div>
         
-        <!-- ПРИГЛАШЕНИЕ ДРУЗЕЙ - ТЕПЕРЬ С TELEGRAM SHARE -->
+        <!-- ПРИГЛАШЕНИЕ ДРУЗЕЙ -->
         <div class="invite-section">
             <h3 style="margin-bottom: 15px;">👥 Пригласи друзей</h3>
             <p style="margin-bottom: 15px; font-size: 14px; opacity: 0.9;">
@@ -409,6 +439,7 @@
         let autoClickers = 0;
         let boostActive = false;
         let coinRotation = 0;
+        let lastPassiveIncomeTime = Date.now();
         
         // Достижения
         const achievements = {
@@ -445,7 +476,7 @@
             document.getElementById('upgrade-auto').addEventListener('click', () => buyUpgrade('auto'));
             document.getElementById('upgrade-boost').addEventListener('click', () => buyUpgrade('boost'));
             
-            // Приглашение друзей - ТЕПЕРЬ С TELEGRAM SHARE
+            // Приглашение друзей
             document.getElementById('invite-button').addEventListener('click', inviteFriends);
         }
         
@@ -463,7 +494,7 @@
             levelProgress += earned;
             
             // Создаем эффект при тапе
-            createTapEffect(event);
+            createTapEffect(event, earned);
             
             // Проверяем достижения
             checkAchievements();
@@ -475,12 +506,12 @@
             saveProgress();
         }
         
-        function createTapEffect(event) {
+        function createTapEffect(event, amount) {
             const effect = document.createElement('div');
             effect.className = 'tap-effect';
             effect.style.left = (event.clientX - 20) + 'px';
             effect.style.top = (event.clientY - 20) + 'px';
-            effect.textContent = '+' + (boostActive ? tapPower * 2 : tapPower);
+            effect.textContent = '+' + amount;
             document.querySelector('.tap-area').appendChild(effect);
             
             setTimeout(() => effect.remove(), 1000);
@@ -498,7 +529,86 @@
             }, 3000);
         }
         
-        // ТЕПЕРЬ РАБОТАЕТ ЧЕРЕЗ TELEGRAM SHARE!
+        // ПАССИВНЫЙ ДОХОД - ТЕПЕРЬ РАБОТАЕТ ПРАВИЛЬНО!
+        function startPassiveIncome() {
+            setInterval(() => {
+                if (passiveIncome > 0) {
+                    const now = Date.now();
+                    const timePassed = (now - lastPassiveIncomeTime) / 1000;
+                    
+                    if (timePassed >= 1) {
+                        const income = passiveIncome;
+                        coins += income;
+                        lastPassiveIncomeTime = now;
+                        
+                        // Показываем эффект пассивного дохода
+                        showPassiveIncomeEffect(income);
+                        
+                        updateUI();
+                        saveProgress();
+                    }
+                }
+            }, 100); // Проверяем каждые 100ms для плавности
+        }
+        
+        function showPassiveIncomeEffect(amount) {
+            const effect = document.createElement('div');
+            effect.className = 'passive-income-effect';
+            effect.textContent = `🤖 +${amount}`;
+            document.body.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.remove();
+            }, 2000);
+        }
+        
+        function buyUpgrade(type) {
+            const button = document.getElementById(`upgrade-${type}`);
+            const cost = parseInt(button.dataset.cost);
+            
+            if (coins >= cost) {
+                coins -= cost;
+                
+                switch(type) {
+                    case 'tap':
+                        tapPower += 1;
+                        button.dataset.cost = Math.floor(cost * 1.5);
+                        button.textContent = Math.floor(cost * 1.5) + ' 💎';
+                        showNotification('💪 Сила тапа увеличена!');
+                        break;
+                    case 'auto':
+                        passiveIncome += 1;  // УВЕЛИЧИВАЕМ ПАССИВНЫЙ ДОХОД!
+                        autoClickers += 1;
+                        button.dataset.cost = Math.floor(cost * 2);
+                        button.textContent = Math.floor(cost * 2) + ' 💎';
+                        showNotification('🤖 Автокликер добавлен! +1/сек');
+                        break;
+                    case 'boost':
+                        activateBoost();
+                        break;
+                }
+                
+                updateUI();
+                saveProgress();
+            } else {
+                showNotification('❌ Недостаточно монет!');
+            }
+        }
+        
+        function activateBoost() {
+            if (boostActive) return;
+            
+            boostActive = true;
+            document.getElementById('coin-button').style.filter = 'brightness(1.3)';
+            showNotification('🚀 Бустер активирован! x2 сила на 30 сек!');
+            
+            setTimeout(() => {
+                boostActive = false;
+                document.getElementById('coin-button').style.filter = 'brightness(1)';
+                showNotification('⏰ Бустер закончился');
+            }, 30000);
+        }
+        
         function inviteFriends() {
             const user = tg.initDataUnsafe.user;
             if (!user) {
@@ -527,59 +637,7 @@
                 }
             }
             
-            // Пока не начисляем монеты - только после реального прихода друга
             showNotification('Пригласи друга и получи 100 монет когда он присоединится! 🎁');
-        }
-        
-        function buyUpgrade(type) {
-            const button = document.getElementById(`upgrade-${type}`);
-            const cost = parseInt(button.dataset.cost);
-            
-            if (coins >= cost) {
-                coins -= cost;
-                
-                switch(type) {
-                    case 'tap':
-                        tapPower += 1;
-                        button.dataset.cost = Math.floor(cost * 1.5);
-                        button.textContent = Math.floor(cost * 1.5) + ' 💎';
-                        break;
-                    case 'auto':
-                        passiveIncome += 1;
-                        autoClickers++;
-                        button.dataset.cost = Math.floor(cost * 2);
-                        button.textContent = Math.floor(cost * 2) + ' 💎';
-                        break;
-                    case 'boost':
-                        activateBoost();
-                        break;
-                }
-                
-                updateUI();
-                saveProgress();
-            }
-        }
-        
-        function activateBoost() {
-            if (boostActive) return;
-            
-            boostActive = true;
-            document.getElementById('coin-button').style.filter = 'brightness(1.3)';
-            
-            setTimeout(() => {
-                boostActive = false;
-                document.getElementById('coin-button').style.filter = 'brightness(1)';
-            }, 30000);
-        }
-        
-        function startPassiveIncome() {
-            setInterval(() => {
-                if (passiveIncome > 0) {
-                    coins += passiveIncome;
-                    updateUI();
-                    saveProgress();
-                }
-            }, 1000);
         }
         
         function checkAchievements() {
@@ -628,7 +686,8 @@
             document.getElementById('coins').textContent = coins;
             document.getElementById('tap-power').textContent = tapPower;
             document.getElementById('total-taps').textContent = totalTaps;
-            document.getElementById('passive-income').textContent = passiveIncome;
+            document.getElementById('auto-clickers').textContent = autoClickers;
+            document.getElementById('income-per-second').textContent = passiveIncome; // ПАССИВНЫЙ ДОХОД!
             document.getElementById('level').textContent = level;
             
             // Обновляем ранги
@@ -657,6 +716,7 @@
                     tapPower = data.tapPower || 1;
                     totalTaps = data.totalTaps || 0;
                     passiveIncome = data.passiveIncome || 0;
+                    autoClickers = data.autoClickers || 0;
                     level = data.level || 1;
                     levelProgress = data.levelProgress || 0;
                 }
@@ -674,6 +734,7 @@
                         tapPower,
                         totalTaps,
                         passiveIncome,
+                        autoClickers,
                         level,
                         levelProgress
                     };
