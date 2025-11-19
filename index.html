@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>TON Tap Game</title>
+    <title>TON Tap Empire</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org;">
     <style>
         * {
             margin: 0;
@@ -15,7 +14,7 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
             min-height: 100vh;
             padding: 0;
@@ -25,128 +24,278 @@
         .container {
             width: 100%;
             min-height: 100vh;
-            padding: 20px 15px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
         }
         
-        .user-info {
-            background: rgba(255,255,255,0.2);
+        /* Header с прогресс баром */
+        .header {
+            background: rgba(255,255,255,0.1);
             padding: 15px;
             border-radius: 15px;
             margin-bottom: 15px;
-            font-size: 16px;
             backdrop-filter: blur(10px);
         }
         
-        .stats {
-            background: rgba(255,255,255,0.15);
-            padding: 15px;
-            border-radius: 15px;
-            margin: 10px 0;
-            font-size: 18px;
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
         
-        .tap-btn {
-            background: #FFD700;
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        
+        /* Основная кнопка тапа */
+        .tap-area {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .main-tap {
+            background: linear-gradient(135deg, #ffd93d, #ff6b6b);
             border: none;
             border-radius: 50%;
-            width: 140px;
-            height: 140px;
-            font-size: 22px;
+            width: 160px;
+            height: 160px;
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
-            margin: 20px auto;
-            display: block;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-            color: #333;
-            transition: transform 0.1s;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+            color: white;
+            position: relative;
+            overflow: hidden;
         }
         
-        .tap-btn:active {
+        .main-tap:active {
             transform: scale(0.95);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.6);
         }
         
-        .upgrade {
+        .tap-effect {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: floatUp 1s forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(0); opacity: 0; }
+        }
+        
+        /* Статистика */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        /* Улучшения */
+        .upgrades-section {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .upgrade-item {
+            background: rgba(255,255,255,0.15);
+            padding: 12px;
+            border-radius: 10px;
+            margin: 8px 0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .upgrade-info {
+            flex: 1;
+        }
+        
+        .upgrade-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .upgrade-desc {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .upgrade-btn {
             background: #4CAF50;
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 12px;
-            margin: 8px 0;
+            padding: 8px 12px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            text-align: center;
+            font-size: 12px;
         }
         
-        .section-title {
-            font-size: 18px;
-            margin-bottom: 12px;
-            text-align: center;
-            font-weight: bold;
+        .upgrade-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
         }
         
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
+        /* Достижения */
+        .achievements-section {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .achievement {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .achievement.locked {
+            opacity: 0.5;
+        }
+        
+        .achievement-icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        
+        /* Кнопки действий */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .action-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Информация о пользователе -->
-        <div class="user-info">
-            <div id="user-name">👤 Загрузка...</div>
-            <div id="user-balance">💎 Баланс: <span id="balance-value">0</span> монет</div>
-        </div>
-        
-        <h1>💰 TON Tap Game</h1>
-        
-        <!-- Статистика -->
-        <div class="stats">
-            <div id="coins">💎 Монеты: <span id="coins-value">0</span></div>
-            <div id="tap-power">⚡ Сила тапа: <span id="power-value">1</span></div>
-            <div id="total-taps">👆 Всего тапов: <span id="taps-value">0</span></div>
-        </div>
-        
-        <!-- Кнопка тапа -->
-        <button class="tap-btn" id="tap-button">TAP!</button>
-        
-        <!-- Улучшения -->
-        <div class="stats">
-            <div class="section-title">🛠 Улучшения</div>
-            <button class="upgrade" id="upgrade-1">
-                💪 +1 к силе (50 монет)
-            </button>
-            <button class="upgrade" id="upgrade-2">
-                🚀 +5 к силе (200 монет)
-            </button>
-            <button class="upgrade" id="upgrade-3">
-                ⚡ Автокликер (500 монет)
-            </button>
-        </div>
-        
-        <!-- Реферальная система -->
-        <div class="stats">
-            <div class="section-title">👥 Пригласи друзей</div>
-            <button class="upgrade" id="share-button">
-                📤 Поделиться игрой +100 монет!
-            </button>
-            <div style="font-size: 14px; text-align: center; margin-top: 10px;">
-                За каждого друга: +50 монет!
+        <!-- Хедер с уровнем -->
+        <div class="header">
+            <div class="level-info">
+                <span>⭐ Уровень <span id="level">1</span></span>
+                <span>💎 <span id="coins">0</span></span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="level-progress" style="width: 0%"></div>
             </div>
         </div>
-
-        <!-- Магазин -->
-        <div class="stats">
-            <div class="section-title">💳 Магазин (скоро)</div>
-            <button class="upgrade" style="background: #ff6b6b;" id="shop-1">
-                💰 Купить TON монеты
+        
+        <!-- Область тапа с эффектами -->
+        <div class="tap-area">
+            <button class="main-tap" id="tap-button">
+                💰<br>TAP!
             </button>
-            <button class="upgrade" style="background: #ff6b6b;" id="shop-2">
-                🏆 VIP статус
+        </div>
+        
+        <!-- Статистика -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                ⚡ Сила: <span id="tap-power">1</span>
+            </div>
+            <div class="stat-card">
+                👆 Тапов: <span id="total-taps">0</span>
+            </div>
+            <div class="stat-card">
+                ⏱️/сек: <span id="passive-income">0</span>
+            </div>
+            <div class="stat-card">
+                🏆 Ранг: <span id="rank">Новичок</span>
+            </div>
+        </div>
+        
+        <!-- Улучшения -->
+        <div class="upgrades-section">
+            <h3 style="margin-bottom: 10px;">🛠 Улучшения</h3>
+            <div class="upgrade-item">
+                <div class="upgrade-info">
+                    <div class="upgrade-name">💪 Усилитель тапа</div>
+                    <div class="upgrade-desc">+1 к силе за клик</div>
+                </div>
+                <button class="upgrade-btn" id="upgrade-tap" data-cost="50">50 💎</button>
+            </div>
+            <div class="upgrade-item">
+                <div class="upgrade-info">
+                    <div class="upgrade-name">⚡ Автокликер</div>
+                    <div class="upgrade-desc">1 монета/сек автоматически</div>
+                </div>
+                <button class="upgrade-btn" id="upgrade-auto" data-cost="100">100 💎</button>
+            </div>
+            <div class="upgrade-item">
+                <div class="upgrade-info">
+                    <div class="upgrade-name">🚀 Бустер x2</div>
+                    <div class="upgrade-desc">Удвоенная сила на 30 сек</div>
+                </div>
+                <button class="upgrade-btn" id="upgrade-boost" data-cost="30">30 💎</button>
+            </div>
+        </div>
+        
+        <!-- Достижения -->
+        <div class="achievements-section">
+            <h3 style="margin-bottom: 10px;">🏆 Достижения</h3>
+            <div class="achievement" id="achieve-100">
+                <span class="achievement-icon">🥉</span>
+                <span>100 тапов (Награда: 50 💎)</span>
+            </div>
+            <div class="achievement locked" id="achieve-500">
+                <span class="achievement-icon">🥈</span>
+                <span>500 тапов (Награда: 200 💎)</span>
+            </div>
+            <div class="achievement locked" id="achieve-1000">
+                <span class="achievement-icon">🥇</span>
+                <span>1000 тапов (Награда: 500 💎)</span>
+            </div>
+        </div>
+        
+        <!-- Кнопки действий -->
+        <div class="action-buttons">
+            <button class="action-btn" id="daily-btn">
+                📅 Ежедневный бонус
+            </button>
+            <button class="action-btn" id="share-btn">
+                👥 Пригласить друга
             </button>
         </div>
     </div>
@@ -156,73 +305,236 @@
         let coins = 0;
         let tapPower = 1;
         let totalTaps = 0;
-        let autoClicker = false;
-        let autoClickerInterval = null;
+        let passiveIncome = 0;
+        let level = 1;
+        let levelProgress = 0;
+        let autoClickers = 0;
+        let boostActive = false;
         
-        // Инициализация Telegram Web App
+        // Достижения
+        const achievements = {
+            100: { claimed: false, reward: 50 },
+            500: { claimed: false, reward: 200 },
+            1000: { claimed: false, reward: 500 }
+        };
+        
+        // Инициализация Telegram
         let tg = window.Telegram.WebApp;
         
-        // Функция инициализации
         function initGame() {
-            console.log("🚀 Игра запускается...");
-            
-            // Растягиваем на весь экран
             tg.expand();
             tg.ready();
             
-            // Получаем данные пользователя
+            // Загрузка прогресса
             const user = tg.initDataUnsafe.user;
             if (user) {
-                document.getElementById('user-name').textContent = `👤 ${user.first_name || 'Игрок'}`;
                 loadProgress(user.id);
-            } else {
-                document.getElementById('user-name').textContent = '👤 Гость';
             }
             
-            // Назначаем обработчики событий
             setupEventListeners();
-            
-            // Обновляем интерфейс
+            startPassiveIncome();
             updateUI();
-            
-            console.log("✅ Игра готова!");
         }
         
         function setupEventListeners() {
-            // Кнопка тапа
-            document.getElementById('tap-button').addEventListener('click', tap);
+            // Основной тап
+            document.getElementById('tap-button').addEventListener('click', handleTap);
             
             // Улучшения
-            document.getElementById('upgrade-1').addEventListener('click', function() {
-                buyUpgrade(1);
-            });
-            document.getElementById('upgrade-2').addEventListener('click', function() {
-                buyUpgrade(2);
-            });
-            document.getElementById('upgrade-3').addEventListener('click', function() {
-                buyUpgrade(3);
-            });
+            document.getElementById('upgrade-tap').addEventListener('click', () => buyUpgrade('tap'));
+            document.getElementById('upgrade-auto').addEventListener('click', () => buyUpgrade('auto'));
+            document.getElementById('upgrade-boost').addEventListener('click', () => buyUpgrade('boost'));
             
-            // Шеринг
-            document.getElementById('share-button').addEventListener('click', shareGame);
+            // Действия
+            document.getElementById('daily-btn').addEventListener('click', claimDailyBonus);
+            document.getElementById('share-btn').addEventListener('click', shareGame);
+        }
+        
+        function handleTap(event) {
+            // Добавляем монеты
+            let earned = tapPower;
+            if (boostActive) earned *= 2;
             
-            // Магазин (заглушки)
-            document.getElementById('shop-1').addEventListener('click', comingSoon);
-            document.getElementById('shop-2').addEventListener('click', comingSoon);
+            coins += earned;
+            totalTaps++;
+            levelProgress += earned;
+            
+            // Создаем эффект при тапе
+            createTapEffect(event);
+            
+            // Проверяем достижения
+            checkAchievements();
+            
+            // Проверяем уровень
+            checkLevelUp();
+            
+            updateUI();
+            saveProgress();
+        }
+        
+        function createTapEffect(event) {
+            const effect = document.createElement('div');
+            effect.className = 'tap-effect';
+            effect.style.left = (event.clientX - 25) + 'px';
+            effect.style.top = (event.clientY - 25) + 'px';
+            effect.textContent = '+' + (boostActive ? tapPower * 2 : tapPower);
+            document.querySelector('.tap-area').appendChild(effect);
+            
+            setTimeout(() => effect.remove(), 1000);
+        }
+        
+        function buyUpgrade(type) {
+            const button = document.getElementById(`upgrade-${type}`);
+            const cost = parseInt(button.dataset.cost);
+            
+            if (coins >= cost) {
+                coins -= cost;
+                
+                switch(type) {
+                    case 'tap':
+                        tapPower += 1;
+                        button.dataset.cost = Math.floor(cost * 1.5);
+                        button.textContent = Math.floor(cost * 1.5) + ' 💎';
+                        break;
+                    case 'auto':
+                        passiveIncome += 1;
+                        autoClickers++;
+                        button.dataset.cost = Math.floor(cost * 2);
+                        button.textContent = Math.floor(cost * 2) + ' 💎';
+                        break;
+                    case 'boost':
+                        activateBoost();
+                        break;
+                }
+                
+                updateUI();
+                saveProgress();
+            }
+        }
+        
+        function activateBoost() {
+            if (boostActive) return;
+            
+            boostActive = true;
+            document.getElementById('tap-button').style.background = 'linear-gradient(135deg, #00b4db, #0083b0)';
+            
+            setTimeout(() => {
+                boostActive = false;
+                document.getElementById('tap-button').style.background = 'linear-gradient(135deg, #ffd93d, #ff6b6b)';
+            }, 30000);
+        }
+        
+        function startPassiveIncome() {
+            setInterval(() => {
+                if (passiveIncome > 0) {
+                    coins += passiveIncome;
+                    updateUI();
+                    saveProgress();
+                }
+            }, 1000);
+        }
+        
+        function checkAchievements() {
+            Object.keys(achievements).forEach(taps => {
+                const achievement = achievements[taps];
+                if (!achievement.claimed && totalTaps >= parseInt(taps)) {
+                    achievement.claimed = true;
+                    coins += achievement.reward;
+                    
+                    const achieveElement = document.getElementById(`achieve-${taps}`);
+                    achieveElement.classList.remove('locked');
+                    achieveElement.innerHTML += ' ✅';
+                    
+                    showNotification(`🎉 Достижение! +${achievement.reward} монет!`);
+                }
+            });
+        }
+        
+        function checkLevelUp() {
+            const needed = level * 100;
+            if (levelProgress >= needed) {
+                level++;
+                levelProgress = 0;
+                tapPower += Math.floor(level / 2);
+                showNotification(`🎊 Уровень ${level}! Сила +${Math.floor(level / 2)}!`);
+            }
+            
+            const progressPercent = (levelProgress / (level * 100)) * 100;
+            document.getElementById('level-progress').style.width = progressPercent + '%';
+        }
+        
+        function claimDailyBonus() {
+            const lastClaim = localStorage.getItem('lastDailyClaim');
+            const today = new Date().toDateString();
+            
+            if (lastClaim !== today) {
+                const bonus = 100 + (level * 10);
+                coins += bonus;
+                localStorage.setItem('lastDailyClaim', today);
+                showNotification(`📅 Ежедневный бонус: +${bonus} монет!`);
+                updateUI();
+                saveProgress();
+            } else {
+                showNotification('❌ Бонус уже получен сегодня!');
+            }
+        }
+        
+        function shareGame() {
+            const user = tg.initDataUnsafe.user;
+            if (!user) return;
+            
+            // В реальной игре здесь была бы проверка рефералов
+            showNotification('Пригласите друга и получите бонус когда он присоединится!');
+            
+            const refLink = `https://t.me/my_game_test_123_bot?start=ref_${user.id}`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(refLink);
+            }
+        }
+        
+        function showNotification(message) {
+            // В будущем - красивый Toast
+            alert(message);
+        }
+        
+        function updateUI() {
+            document.getElementById('coins').textContent = coins;
+            document.getElementById('tap-power').textContent = tapPower;
+            document.getElementById('total-taps').textContent = totalTaps;
+            document.getElementById('passive-income').textContent = passiveIncome;
+            document.getElementById('level').textContent = level;
+            
+            // Обновляем ранги
+            const ranks = ['Новичок', 'Любитель', 'Профи', 'Эксперт', 'Мастер'];
+            document.getElementById('rank').textContent = ranks[Math.min(level - 1, 4)];
+            
+            // Обновляем кнопки улучшений
+            updateUpgradeButtons();
+        }
+        
+        function updateUpgradeButtons() {
+            const upgrades = ['tap', 'auto', 'boost'];
+            upgrades.forEach(type => {
+                const button = document.getElementById(`upgrade-${type}`);
+                const cost = parseInt(button.dataset.cost);
+                button.disabled = coins < cost;
+            });
         }
         
         function loadProgress(userId) {
             try {
-                const saved = localStorage.getItem(`game_${userId}`);
+                const saved = localStorage.getItem(`ton_empire_${userId}`);
                 if (saved) {
                     const data = JSON.parse(saved);
                     coins = data.coins || 0;
-                    tapPower = data.power || 1;
-                    totalTaps = data.taps || 0;
-                    console.log("📁 Прогресс загружен:", data);
+                    tapPower = data.tapPower || 1;
+                    totalTaps = data.totalTaps || 0;
+                    passiveIncome = data.passiveIncome || 0;
+                    level = data.level || 1;
+                    levelProgress = data.levelProgress || 0;
                 }
             } catch (e) {
-                console.log("❌ Ошибка загрузки прогресса:", e);
+                console.error('Error loading progress:', e);
             }
         }
         
@@ -231,115 +543,22 @@
                 const user = tg.initDataUnsafe.user;
                 if (user) {
                     const data = {
-                        coins: coins,
-                        power: tapPower,
-                        taps: totalTaps
+                        coins,
+                        tapPower,
+                        totalTaps,
+                        passiveIncome,
+                        level,
+                        levelProgress
                     };
-                    localStorage.setItem(`game_${user.id}`, JSON.stringify(data));
+                    localStorage.setItem(`ton_empire_${user.id}`, JSON.stringify(data));
                 }
             } catch (e) {
-                console.log("❌ Ошибка сохранения:", e);
+                console.error('Error saving progress:', e);
             }
         }
         
-        function tap() {
-            coins += tapPower;
-            totalTaps++;
-            updateUI();
-            saveProgress();
-            console.log("👆 Тап! Монеты:", coins);
-        }
-        
-        function buyUpgrade(type) {
-            let success = false;
-            let message = '';
-            
-            if (type === 1 && coins >= 50) {
-                coins -= 50;
-                tapPower += 1;
-                success = true;
-                message = 'Улучшение куплено! +1 к силе 💪';
-            } else if (type === 2 && coins >= 200) {
-                coins -= 200;
-                tapPower += 5;
-                success = true;
-                message = 'Мега улучшение! +5 к силе 🚀';
-            } else if (type === 3 && coins >= 500) {
-                coins -= 500;
-                autoClicker = true;
-                startAutoClicker();
-                success = true;
-                message = 'Автокликер активирован! ⚡';
-            } else {
-                message = 'Недостаточно монет! 😢';
-            }
-            
-            if (success) {
-                showNotification(message);
-                updateUI();
-                saveProgress();
-            } else {
-                showNotification(message);
-            }
-        }
-        
-        function startAutoClicker() {
-            if (autoClicker && !autoClickerInterval) {
-                autoClickerInterval = setInterval(() => {
-                    coins += tapPower;
-                    totalTaps++;
-                    updateUI();
-                    saveProgress();
-                }, 1000);
-            }
-        }
-        
-        function shareGame() {
-            const user = tg.initDataUnsafe.user;
-            const refLink = `https://t.me/my_game_test_123_bot?start=ref_${user?.id || '0'}`;
-            
-            coins += 100;
-            showNotification('+100 монет за распространение! 🎁');
-            
-            // Показываем ссылку для копирования
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(refLink).then(() => {
-                    showNotification('Ссылка скопирована! Отправьте другу 📤');
-                });
-            } else {
-                prompt('Скопируйте ссылку для друга:', refLink);
-            }
-            
-            updateUI();
-            saveProgress();
-        }
-        
-        function showNotification(message) {
-            // Простое уведомление
-            alert(message);
-        }
-        
-        function comingSoon() {
-            showNotification('Эта функция появится в следующих обновлениях! 🔥');
-        }
-        
-        function updateUI() {
-            // Обновляем все значения через span
-            document.getElementById('coins-value').textContent = coins;
-            document.getElementById('power-value').textContent = tapPower;
-            document.getElementById('taps-value').textContent = totalTaps;
-            document.getElementById('balance-value').textContent = coins;
-            
-            console.log("🔄 Интерфейс обновлен");
-        }
-        
-        // Запускаем игру когда всё загрузится
+        // Запуск игры
         document.addEventListener('DOMContentLoaded', initGame);
-        
-        // Дополнительная инициализация для Telegram
-        if (window.Telegram && window.Telegram.WebApp) {
-            Telegram.WebApp.ready();
-        }
     </script>
 </body>
 </html>
