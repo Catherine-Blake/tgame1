@@ -37,6 +37,7 @@
             margin-bottom: 15px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
         }
         
         .level-info {
@@ -51,6 +52,7 @@
             background: rgba(255,255,255,0.2);
             border-radius: 4px;
             overflow: hidden;
+            position: relative;
         }
         
         .progress-fill {
@@ -67,7 +69,20 @@
             100% { background-position: 200% 0; }
         }
         
-        /* ОСНОВНОЙ ЭЛЕМЕНТ ДЛЯ ТАПА - ТЕПЕРЬ ЭТО TON МОНЕТА */
+        /* КОМБО-СИСТЕМА */
+        .combo-display {
+            position: absolute;
+            top: -25px;
+            right: 10px;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        /* ОСНОВНОЙ ЭЛЕМЕНТ С ПРОГРЕССИЕЙ */
         .tap-area {
             text-align: center;
             margin: 25px 0;
@@ -82,9 +97,10 @@
             position: relative;
             cursor: pointer;
             transform-style: preserve-3d;
-            transition: transform 0.1s;
+            transition: all 0.3s ease;
         }
         
+        /* ВИЗУАЛЬНАЯ ПРОГРЕССИЯ ПО УРОВНЯМ */
         .coin-front, .coin-back {
             position: absolute;
             width: 100%;
@@ -96,25 +112,39 @@
             justify-content: center;
             font-size: 32px;
             font-weight: bold;
+            transition: all 0.5s ease;
         }
         
-        .coin-front {
+        /* Уровень 1-5: Базовая монета */
+        .coin-front.level-1 {
             background: radial-gradient(circle at 30% 30%, #ffd93d, #ff9a00);
             border: 8px solid #ff9a00;
-            box-shadow: 
-                0 0 30px rgba(255, 217, 61, 0.6),
-                inset 0 0 20px rgba(255, 255, 255, 0.3);
-            color: #8b6914;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 0 30px rgba(255, 217, 61, 0.6);
+        }
+        
+        /* Уровень 6-10: Серебряная монета */
+        .coin-front.level-6 {
+            background: radial-gradient(circle at 30% 30%, #e0e0e0, #a0a0a0);
+            border: 8px solid #c0c0c0;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Уровень 11+: Золотая монета */
+        .coin-front.level-11 {
+            background: radial-gradient(circle at 30% 30%, #ffd700, #ff9900);
+            border: 8px solid #ff9900;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 1);
+            animation: goldGlow 2s infinite alternate;
+        }
+        
+        @keyframes goldGlow {
+            from { box-shadow: 0 0 50px rgba(255, 215, 0, 0.8); }
+            to { box-shadow: 0 0 70px rgba(255, 215, 0, 1); }
         }
         
         .coin-back {
             background: radial-gradient(circle at 30% 30%, #0088cc, #005599);
             border: 8px solid #005599;
-            box-shadow: 
-                0 0 30px rgba(0, 136, 204, 0.6),
-                inset 0 0 20px rgba(255, 255, 255, 0.3);
-            color: white;
             transform: rotateY(180deg);
         }
         
@@ -139,11 +169,11 @@
             100% { transform: scale(1.1); opacity: 0; }
         }
         
+        /* ЭФФЕКТЫ ТАПА */
         .tap-effect {
             position: absolute;
             width: 40px;
             height: 40px;
-            background: radial-gradient(circle, #ffd93d, transparent);
             border-radius: 50%;
             animation: floatUp 1s forwards;
             pointer-events: none;
@@ -151,8 +181,25 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ff9a00;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .tap-effect.normal {
+            background: radial-gradient(circle, #ffd93d, transparent);
+            color: #ff9a00;
+        }
+        
+        .tap-effect.critical {
+            background: radial-gradient(circle, #ff6b6b, transparent);
+            color: #ff0000;
+            font-size: 18px;
+            animation: criticalFloat 1s forwards;
+        }
+        
+        .tap-effect.combo {
+            background: radial-gradient(circle, #4CAF50, transparent);
+            color: #00ff00;
+            animation: comboFloat 1s forwards;
         }
         
         @keyframes floatUp {
@@ -160,7 +207,39 @@
             100% { transform: translateY(-80px) scale(0); opacity: 0; }
         }
         
-        /* Статистика - ТЕПЕРЬ ПОНЯТНАЯ! */
+        @keyframes criticalFloat {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-40px) scale(1.5); opacity: 1; }
+            100% { transform: translateY(-80px) scale(0); opacity: 0; }
+        }
+        
+        @keyframes comboFloat {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-120px) scale(1.2); opacity: 0; }
+        }
+        
+        /* СЛУЧАЙНЫЕ ИВЕНТЫ */
+        .event-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+        }
+        
+        .event-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        /* Статистика */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -332,9 +411,17 @@
     </style>
 </head>
 <body>
+    <!-- УВЕДОМЛЕНИЕ О ИВЕНТЕ -->
+    <div class="event-notification" id="event-notification">
+        <div class="event-title" id="event-title">🎉 СЕКРЕТНЫЙ ИВЕНТ!</div>
+        <div id="event-description">Ты нашел секретную монету!</div>
+        <button onclick="closeEvent()" style="margin-top: 15px; padding: 10px 20px; background: #ffd93d; border: none; border-radius: 10px; cursor: pointer;">Круто!</button>
+    </div>
+
     <div class="container">
-        <!-- Хедер с уровнем -->
+        <!-- Хедер с уровнем и КОМБО -->
         <div class="header">
+            <div class="combo-display" id="combo-display">Комбо: 0x</div>
             <div class="level-info">
                 <span>⭐ Уровень <span id="level">1</span></span>
                 <span>💎 <span id="coins">0</span></span>
@@ -344,16 +431,16 @@
             </div>
         </div>
         
-        <!-- ОСНОВНОЙ ЭЛЕМЕНТ - TON МОНЕТА -->
+        <!-- ОСНОВНОЙ ЭЛЕМЕНТ С ПРОГРЕССИЕЙ -->
         <div class="tap-area">
             <div class="ton-coin" id="coin-button">
-                <div class="coin-front">TON</div>
+                <div class="coin-front level-1" id="coin-front">TON</div>
                 <div class="coin-back">💰</div>
                 <div class="coin-pulse"></div>
             </div>
         </div>
         
-        <!-- СТАТИСТИКА - ТЕПЕРЬ ПОНЯТНАЯ! -->
+        <!-- СТАТИСТИКА -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div>⚡ Сила тапа</div>
@@ -392,10 +479,10 @@
             </div>
             <div class="upgrade-item">
                 <div class="upgrade-info">
-                    <div class="upgrade-name">🚀 Бустер x2</div>
-                    <div class="upgrade-desc">Удвоенная сила на 30 сек</div>
+                    <div class="upgrade-name">🎯 Критический удар</div>
+                    <div class="upgrade-desc">Шанс x3 урона</div>
                 </div>
-                <button class="upgrade-btn" id="upgrade-boost" data-cost="30">30 💎</button>
+                <button class="upgrade-btn" id="upgrade-crit" data-cost="200">200 💎</button>
             </div>
         </div>
         
@@ -425,6 +512,10 @@
                 <span class="achievement-icon">🥇</span>
                 <span>1000 тапов (Награда: 500 💎)</span>
             </div>
+            <div class="achievement locked" id="achieve-combo">
+                <span class="achievement-icon">🔥</span>
+                <span>Комбо x10 (Награда: 300 💎)</span>
+            </div>
         </div>
     </div>
 
@@ -441,12 +532,62 @@
         let coinRotation = 0;
         let lastPassiveIncomeTime = Date.now();
         
+        // НОВЫЕ СИСТЕМЫ!
+        let combo = 0;
+        let comboTimeout;
+        let critChance = 0; // Шанс критического удара
+        let lastTapTime = 0;
+        let eventCooldown = 0;
+        
         // Достижения
         const achievements = {
             100: { claimed: false, reward: 50 },
             500: { claimed: false, reward: 200 },
-            1000: { claimed: false, reward: 500 }
+            1000: { claimed: false, reward: 500 },
+            combo: { claimed: false, reward: 300 }
         };
+        
+        // СЛУЧАЙНЫЕ ИВЕНТЫ
+        const randomEvents = [
+            {
+                name: "💰 Золотой дождь",
+                description: "Все тапы дают x3 монеты на 30 секунд!",
+                chance: 0.02, // 2% шанс при тапе
+                effect: function() {
+                    const oldPower = tapPower;
+                    tapPower *= 3;
+                    showEventNotification(this.name, this.description);
+                    setTimeout(() => {
+                        tapPower = oldPower;
+                        showNotification("⚡ Золотой дождь закончился");
+                    }, 30000);
+                }
+            },
+            {
+                name: "🎰 Счастливый тап", 
+                description: "Случайный бонус от x2 до x10!",
+                chance: 0.03,
+                effect: function() {
+                    const multiplier = Math.floor(Math.random() * 9) + 2;
+                    const bonus = tapPower * multiplier;
+                    coins += bonus;
+                    showEventNotification(this.name, `Ты получил ${multiplier}x бонус: +${bonus} монет!`);
+                }
+            },
+            {
+                name: "🤖 Завод автокликеров",
+                description: "Твои автокликеры работают в 2 раза быстрее 1 минуту!",
+                chance: 0.015,
+                effect: function() {
+                    passiveIncome *= 2;
+                    showEventNotification(this.name, this.description);
+                    setTimeout(() => {
+                        passiveIncome /= 2;
+                        showNotification("⚙️ Завод закрылся");
+                    }, 60000);
+                }
+            }
+        ];
         
         // Инициализация Telegram
         let tg = window.Telegram.WebApp;
@@ -465,6 +606,7 @@
             startPassiveIncome();
             startCoinAnimation();
             updateUI();
+            updateCoinAppearance();
         }
         
         function setupEventListeners() {
@@ -474,27 +616,77 @@
             // Улучшения
             document.getElementById('upgrade-tap').addEventListener('click', () => buyUpgrade('tap'));
             document.getElementById('upgrade-auto').addEventListener('click', () => buyUpgrade('auto'));
-            document.getElementById('upgrade-boost').addEventListener('click', () => buyUpgrade('boost'));
+            document.getElementById('upgrade-crit').addEventListener('click', () => buyUpgrade('crit'));
             
             // Приглашение друзей
             document.getElementById('invite-button').addEventListener('click', inviteFriends);
         }
         
         function handleTap(event) {
+            const now = Date.now();
+            
+            // КОМБО-СИСТЕМА
+            if (now - lastTapTime < 2000) { // 2 секунды на комбо
+                combo++;
+                clearTimeout(comboTimeout);
+            } else {
+                combo = 1;
+            }
+            
+            comboTimeout = setTimeout(() => {
+                if (combo >= 10 && !achievements.combo.claimed) {
+                    achievements.combo.claimed = true;
+                    coins += achievements.combo.reward;
+                    document.getElementById('achieve-combo').classList.remove('locked');
+                    document.getElementById('achieve-combo').classList.add('unlocked');
+                    showNotification(`🎯 Комбо достижение! +${achievements.combo.reward} монет!`);
+                }
+                combo = 0;
+                updateComboDisplay();
+            }, 2000);
+            
+            lastTapTime = now;
+            updateComboDisplay();
+            
             // Вращаем монету
             coinRotation += 180;
             document.getElementById('coin-button').style.transform = `rotateY(${coinRotation}deg)`;
             
-            // Добавляем монеты
+            // РАСЧЕТ УРОНА С КРИТАМИ И КОМБО
             let earned = tapPower;
-            if (boostActive) earned *= 2;
+            let isCritical = false;
+            let isComboBonus = false;
+            
+            // Критический удар
+            if (Math.random() < critChance) {
+                earned *= 3;
+                isCritical = true;
+            }
+            
+            // Бонус комбо (после 5 тапов подряд)
+            if (combo >= 5) {
+                earned += Math.floor(combo / 5);
+                isComboBonus = true;
+            }
+            
+            // СЛУЧАЙНЫЕ ИВЕНТЫ
+            if (eventCooldown <= 0) {
+                randomEvents.forEach(event => {
+                    if (Math.random() < event.chance) {
+                        event.effect();
+                        eventCooldown = 60; // 60 тапов до следующего ивента
+                    }
+                });
+            } else {
+                eventCooldown--;
+            }
             
             coins += earned;
             totalTaps++;
             levelProgress += earned;
             
-            // Создаем эффект при тапе
-            createTapEffect(event, earned);
+            // СОЗДАЕМ ЭФФЕКТЫ
+            createTapEffect(event, earned, isCritical, isComboBonus);
             
             // Проверяем достижения
             checkAchievements();
@@ -506,15 +698,39 @@
             saveProgress();
         }
         
-        function createTapEffect(event, amount) {
+        function createTapEffect(event, amount, isCritical = false, isComboBonus = false) {
             const effect = document.createElement('div');
             effect.className = 'tap-effect';
+            
+            if (isCritical) {
+                effect.className += ' critical';
+                effect.textContent = 'CRIT! +' + amount;
+            } else if (isComboBonus) {
+                effect.className += ' combo'; 
+                effect.textContent = 'COMBO +' + amount;
+            } else {
+                effect.className += ' normal';
+                effect.textContent = '+' + amount;
+            }
+            
             effect.style.left = (event.clientX - 20) + 'px';
             effect.style.top = (event.clientY - 20) + 'px';
-            effect.textContent = '+' + amount;
             document.querySelector('.tap-area').appendChild(effect);
             
             setTimeout(() => effect.remove(), 1000);
+        }
+        
+        function updateComboDisplay() {
+            const comboDisplay = document.getElementById('combo-display');
+            if (combo >= 3) {
+                comboDisplay.style.display = 'block';
+                comboDisplay.textContent = `Комбо: ${combo}x`;
+                comboDisplay.style.background = combo >= 10 ? 
+                    'linear-gradient(135deg, #ff0000, #ff6b6b)' :
+                    'linear-gradient(135deg, #ff6b6b, #ffd93d)';
+            } else {
+                comboDisplay.style.display = 'none';
+            }
         }
         
         function startCoinAnimation() {
@@ -529,7 +745,32 @@
             }, 3000);
         }
         
-        // ПАССИВНЫЙ ДОХОД - ТЕПЕРЬ РАБОТАЕТ ПРАВИЛЬНО!
+        // ВИЗУАЛЬНАЯ ПРОГРЕССИЯ МОНЕТЫ
+        function updateCoinAppearance() {
+            const coinFront = document.getElementById('coin-front');
+            coinFront.className = 'coin-front';
+            
+            if (level >= 11) {
+                coinFront.classList.add('level-11');
+            } else if (level >= 6) {
+                coinFront.classList.add('level-6'); 
+            } else {
+                coinFront.classList.add('level-1');
+            }
+        }
+        
+        // СЛУЧАЙНЫЕ ИВЕНТЫ
+        function showEventNotification(title, description) {
+            document.getElementById('event-title').textContent = title;
+            document.getElementById('event-description').textContent = description;
+            document.getElementById('event-notification').style.display = 'block';
+        }
+        
+        function closeEvent() {
+            document.getElementById('event-notification').style.display = 'none';
+        }
+        
+        // ПАССИВНЫЙ ДОХОД
         function startPassiveIncome() {
             setInterval(() => {
                 if (passiveIncome > 0) {
@@ -541,14 +782,12 @@
                         coins += income;
                         lastPassiveIncomeTime = now;
                         
-                        // Показываем эффект пассивного дохода
                         showPassiveIncomeEffect(income);
-                        
                         updateUI();
                         saveProgress();
                     }
                 }
-            }, 100); // Проверяем каждые 100ms для плавности
+            }, 100);
         }
         
         function showPassiveIncomeEffect(amount) {
@@ -577,14 +816,17 @@
                         showNotification('💪 Сила тапа увеличена!');
                         break;
                     case 'auto':
-                        passiveIncome += 1;  // УВЕЛИЧИВАЕМ ПАССИВНЫЙ ДОХОД!
+                        passiveIncome += 1;
                         autoClickers += 1;
                         button.dataset.cost = Math.floor(cost * 2);
                         button.textContent = Math.floor(cost * 2) + ' 💎';
                         showNotification('🤖 Автокликер добавлен! +1/сек');
                         break;
-                    case 'boost':
-                        activateBoost();
+                    case 'crit':
+                        critChance += 0.05; // +5% шанс крита
+                        button.dataset.cost = Math.floor(cost * 3);
+                        button.textContent = Math.floor(cost * 3) + ' 💎';
+                        showNotification('🎯 Шанс критического удара увеличен!');
                         break;
                 }
                 
@@ -619,18 +861,15 @@
             const referralCode = user.id;
             const shareText = `🎮 Присоединяйся к TON Tap Empire! \n\nЗарабатывай монеты, улучшай свою силу и соревнуйся с друзьями! \n\nНачни играть: https://t.me/my_game_test_123_bot?start=ref_${referralCode}`;
             
-            // Используем встроенный шеринг Telegram
             if (tg.share) {
                 tg.share(shareText);
             } else {
-                // Fallback для браузера
                 if (navigator.share) {
                     navigator.share({
                         title: 'TON Tap Empire',
                         text: shareText
                     });
                 } else {
-                    // Копирование в буфер обмена
                     navigator.clipboard.writeText(shareText).then(() => {
                         showNotification('📋 Ссылка скопирована! Отправь другу в Telegram');
                     });
@@ -641,13 +880,15 @@
         }
         
         function checkAchievements() {
-            Object.keys(achievements).forEach(taps => {
-                const achievement = achievements[taps];
-                if (!achievement.claimed && totalTaps >= parseInt(taps)) {
+            Object.keys(achievements).forEach(key => {
+                if (key === 'combo') return; // Комбо обрабатывается отдельно
+                
+                const achievement = achievements[key];
+                if (!achievement.claimed && totalTaps >= parseInt(key)) {
                     achievement.claimed = true;
                     coins += achievement.reward;
                     
-                    const achieveElement = document.getElementById(`achieve-${taps}`);
+                    const achieveElement = document.getElementById(`achieve-${key}`);
                     achieveElement.classList.remove('locked');
                     achieveElement.classList.add('unlocked');
                     
@@ -662,7 +903,18 @@
                 level++;
                 levelProgress = 0;
                 tapPower += Math.floor(level / 2);
+                
+                // ВИЗУАЛЬНОЕ ОБНОВЛЕНИЕ ПРИ ЛЕВЕЛ-АПЕ
+                updateCoinAppearance();
+                
                 showNotification(`🎊 Уровень ${level}! Сила +${Math.floor(level / 2)}!`);
+                
+                // СПЕЦИАЛЬНЫЙ БОНУС НА КАЖДЫЙ 5-Й УРОВЕНЬ
+                if (level % 5 === 0) {
+                    const bonus = level * 10;
+                    coins += bonus;
+                    showNotification(`🏆 Юбилейный уровень! Бонус: +${bonus} монет!`);
+                }
             }
             
             const progressPercent = (levelProgress / (level * 100)) * 100;
@@ -670,7 +922,6 @@
         }
         
         function showNotification(message) {
-            // Используем Telegram уведомления если доступно
             if (tg.showPopup) {
                 tg.showPopup({
                     title: 'Уведомление',
@@ -687,19 +938,18 @@
             document.getElementById('tap-power').textContent = tapPower;
             document.getElementById('total-taps').textContent = totalTaps;
             document.getElementById('auto-clickers').textContent = autoClickers;
-            document.getElementById('income-per-second').textContent = passiveIncome; // ПАССИВНЫЙ ДОХОД!
+            document.getElementById('income-per-second').textContent = passiveIncome;
             document.getElementById('level').textContent = level;
             
             // Обновляем ранги
             const ranks = ['Новичок', 'Любитель', 'Профи', 'Эксперт', 'Мастер'];
             document.getElementById('rank').textContent = ranks[Math.min(level - 1, 4)];
             
-            // Обновляем кнопки улучшений
             updateUpgradeButtons();
         }
         
         function updateUpgradeButtons() {
-            const upgrades = ['tap', 'auto', 'boost'];
+            const upgrades = ['tap', 'auto', 'crit'];
             upgrades.forEach(type => {
                 const button = document.getElementById(`upgrade-${type}`);
                 const cost = parseInt(button.dataset.cost);
@@ -719,6 +969,7 @@
                     autoClickers = data.autoClickers || 0;
                     level = data.level || 1;
                     levelProgress = data.levelProgress || 0;
+                    critChance = data.critChance || 0;
                 }
             } catch (e) {
                 console.error('Error loading progress:', e);
@@ -736,7 +987,8 @@
                         passiveIncome,
                         autoClickers,
                         level,
-                        levelProgress
+                        levelProgress,
+                        critChance
                     };
                     localStorage.setItem(`ton_empire_${user.id}`, JSON.stringify(data));
                 }
