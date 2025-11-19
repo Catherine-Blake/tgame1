@@ -28,7 +28,93 @@
             display: flex;
             flex-direction: column;
         }
-        
+
+        /* НАВИГАЦИЯ */
+        .nav-tabs {
+            display: flex;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-tab.active {
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* СИСТЕМА РАНГОВ - ВИЗУАЛЬНЫЕ ЭФФЕКТЫ */
+        .rank-bronze { color: #CD7F32; text-shadow: 0 0 10px rgba(205, 127, 50, 0.5); }
+        .rank-silver { color: #C0C0C0; text-shadow: 0 0 15px rgba(192, 192, 192, 0.6); }
+        .rank-gold { 
+            color: #FFD700; 
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: goldShine 3s infinite;
+        }
+        .rank-platinum { 
+            color: #E5E4E2;
+            text-shadow: 0 0 25px rgba(229, 228, 226, 0.8);
+            background: linear-gradient(45deg, #E5E4E2, #B0B0B0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .rank-diamond {
+            color: #B9F2FF;
+            text-shadow: 0 0 30px rgba(185, 242, 255, 0.9);
+            background: linear-gradient(45deg, #B9F2FF, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: diamondSparkle 4s infinite;
+        }
+
+        @keyframes goldShine {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        @keyframes diamondSparkle {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(45deg); }
+        }
+
+        .rank-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .badge-bronze { background: linear-gradient(45deg, #CD7F32, #8B6914); }
+        .badge-silver { background: linear-gradient(45deg, #C0C0C0, #A0A0A0); }
+        .badge-gold { background: linear-gradient(45deg, #FFD700, #FF8C00); }
+        .badge-platinum { background: linear-gradient(45deg, #E5E4E2, #C0C0C0); }
+        .badge-diamond { 
+            background: linear-gradient(45deg, #B9F2FF, #667eea);
+            animation: badgeGlow 2s infinite;
+        }
+
+        @keyframes badgeGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(185, 242, 255, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(185, 242, 255, 0.8); }
+        }
+
         /* Header с прогресс баром */
         .header {
             background: rgba(255,255,255,0.1);
@@ -40,6 +126,18 @@
             position: relative;
         }
         
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .player-rank {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         .level-info {
             display: flex;
             justify-content: space-between;
@@ -69,20 +167,7 @@
             100% { background-position: 200% 0; }
         }
         
-        /* КОМБО-СИСТЕМА */
-        .combo-display {
-            position: absolute;
-            top: -25px;
-            right: 10px;
-            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            display: none;
-        }
-        
-        /* ОСНОВНОЙ ЭЛЕМЕНТ С ПРОГРЕССИЕЙ */
+        /* ОСНОВНОЙ ЭЛЕМЕНТ */
         .tap-area {
             text-align: center;
             margin: 25px 0;
@@ -100,7 +185,6 @@
             transition: all 0.3s ease;
         }
         
-        /* ВИЗУАЛЬНАЯ ПРОГРЕССИЯ ПО УРОВНЯМ */
         .coin-front, .coin-back {
             position: absolute;
             width: 100%;
@@ -115,31 +199,10 @@
             transition: all 0.5s ease;
         }
         
-        /* Уровень 1-5: Базовая монета */
-        .coin-front.level-1 {
+        .coin-front {
             background: radial-gradient(circle at 30% 30%, #ffd93d, #ff9a00);
             border: 8px solid #ff9a00;
             box-shadow: 0 0 30px rgba(255, 217, 61, 0.6);
-        }
-        
-        /* Уровень 6-10: Серебряная монета */
-        .coin-front.level-6 {
-            background: radial-gradient(circle at 30% 30%, #e0e0e0, #a0a0a0);
-            border: 8px solid #c0c0c0;
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.8);
-        }
-        
-        /* Уровень 11+: Золотая монета */
-        .coin-front.level-11 {
-            background: radial-gradient(circle at 30% 30%, #ffd700, #ff9900);
-            border: 8px solid #ff9900;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 1);
-            animation: goldGlow 2s infinite alternate;
-        }
-        
-        @keyframes goldGlow {
-            from { box-shadow: 0 0 50px rgba(255, 215, 0, 0.8); }
-            to { box-shadow: 0 0 70px rgba(255, 215, 0, 1); }
         }
         
         .coin-back {
@@ -189,57 +252,12 @@
             color: #ff9a00;
         }
         
-        .tap-effect.critical {
-            background: radial-gradient(circle, #ff6b6b, transparent);
-            color: #ff0000;
-            font-size: 18px;
-            animation: criticalFloat 1s forwards;
-        }
-        
-        .tap-effect.combo {
-            background: radial-gradient(circle, #4CAF50, transparent);
-            color: #00ff00;
-            animation: comboFloat 1s forwards;
-        }
-        
         @keyframes floatUp {
             0% { transform: translateY(0) scale(1); opacity: 1; }
             100% { transform: translateY(-80px) scale(0); opacity: 0; }
         }
-        
-        @keyframes criticalFloat {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            50% { transform: translateY(-40px) scale(1.5); opacity: 1; }
-            100% { transform: translateY(-80px) scale(0); opacity: 0; }
-        }
-        
-        @keyframes comboFloat {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-120px) scale(1.2); opacity: 0; }
-        }
-        
-        /* СЛУЧАЙНЫЕ ИВЕНТЫ */
-        .event-notification {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: none;
-        }
-        
-        .event-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        /* Статистика */
+
+        /* СТАТИСТИКА */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -262,7 +280,93 @@
             font-weight: bold;
             margin-top: 4px;
         }
-        
+
+        /* ЛИДЕРБОРД */
+        .leaderboard-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateX(5px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .leaderboard-rank {
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .leaderboard-player {
+            flex: 1;
+            margin-left: 10px;
+        }
+
+        .leaderboard-score {
+            font-weight: bold;
+            color: #ffd93d;
+        }
+
+        .rank-1 { background: linear-gradient(45deg, rgba(255,215,0,0.2), rgba(255,165,0,0.2)); }
+        .rank-2 { background: linear-gradient(45deg, rgba(192,192,192,0.2), rgba(160,160,160,0.2)); }
+        .rank-3 { background: linear-gradient(45deg, rgba(205,127,50,0.2), rgba(139,105,20,0.2)); }
+
+        /* ПРОФИЛЬ */
+        .profile-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .profile-stat {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .beta-notice {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+
         /* Улучшения */
         .upgrades-section {
             background: rgba(255,255,255,0.1);
@@ -320,206 +424,205 @@
             cursor: not-allowed;
             box-shadow: none;
         }
-        
-        /* Кнопка приглашения */
-        .invite-section {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 15px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.2);
+
+        /* Скрытые секции */
+        .section {
+            display: none;
         }
-        
-        .invite-btn {
-            background: rgba(255,255,255,0.9);
-            color: #667eea;
-            border: none;
-            padding: 16px 24px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
-        }
-        
-        .invite-btn:active {
-            transform: scale(0.98);
-        }
-        
-        /* Достижения */
-        .achievements-section {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .achievement {
-            background: rgba(255,255,255,0.1);
-            padding: 12px;
-            border-radius: 10px;
-            margin: 8px 0;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .achievement.locked {
-            opacity: 0.5;
-            filter: grayscale(1);
-        }
-        
-        .achievement.unlocked {
-            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.2));
-            border: 1px solid rgba(255,215,0,0.3);
-        }
-        
-        .achievement-icon {
-            font-size: 24px;
-            margin-right: 12px;
-            min-width: 30px;
-        }
-        
-        /* Анимация пассивного дохода */
-        .passive-income-effect {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(76, 175, 80, 0.9);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            animation: slideIn 0.5s ease-out;
-            z-index: 1000;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+
+        .section.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- УВЕДОМЛЕНИЕ О ИВЕНТЕ -->
-    <div class="event-notification" id="event-notification">
-        <div class="event-title" id="event-title">🎉 СЕКРЕТНЫЙ ИВЕНТ!</div>
-        <div id="event-description">Ты нашел секретную монету!</div>
-        <button onclick="closeEvent()" style="margin-top: 15px; padding: 10px 20px; background: #ffd93d; border: none; border-radius: 10px; cursor: pointer;">Круто!</button>
-    </div>
-
     <div class="container">
-        <!-- Хедер с уровнем и КОМБО -->
-        <div class="header">
-            <div class="combo-display" id="combo-display">Комбо: 0x</div>
-            <div class="level-info">
-                <span>⭐ Уровень <span id="level">1</span></span>
-                <span>💎 <span id="coins">0</span></span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="level-progress" style="width: 0%"></div>
-            </div>
+        <!-- НАВИГАЦИЯ -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showSection('game')">🎮 Игра</div>
+            <div class="nav-tab" onclick="showSection('leaderboard')">🏆 Топ-50</div>
+            <div class="nav-tab" onclick="showSection('profile')">👤 Профиль</div>
         </div>
-        
-        <!-- ОСНОВНОЙ ЭЛЕМЕНТ С ПРОГРЕССИЕЙ -->
-        <div class="tap-area">
-            <div class="ton-coin" id="coin-button">
-                <div class="coin-front level-1" id="coin-front">TON</div>
-                <div class="coin-back">💰</div>
-                <div class="coin-pulse"></div>
-            </div>
-        </div>
-        
-        <!-- СТАТИСТИКА -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div>⚡ Сила тапа</div>
-                <div class="stat-value" id="tap-power">1</div>
-            </div>
-            <div class="stat-card">
-                <div>👆 Всего тапов</div>
-                <div class="stat-value" id="total-taps">0</div>
-            </div>
-            <div class="stat-card">
-                <div>🤖 Автокликеры</div>
-                <div class="stat-value" id="auto-clickers">0</div>
-            </div>
-            <div class="stat-card">
-                <div>💰 В секунду</div>
-                <div class="stat-value" id="income-per-second">0</div>
-            </div>
-        </div>
-        
-        <!-- Улучшения -->
-        <div class="upgrades-section">
-            <h3 style="margin-bottom: 15px; text-align: center;">🛠 Улучшения</h3>
-            <div class="upgrade-item">
-                <div class="upgrade-info">
-                    <div class="upgrade-name">💪 Усилитель тапа</div>
-                    <div class="upgrade-desc">+1 к силе за клик</div>
+
+        <!-- СЕКЦИЯ ИГРЫ -->
+        <div id="game-section" class="section active">
+            <!-- Хедер с уровнем -->
+            <div class="header">
+                <div class="player-info">
+                    <div class="player-rank" id="player-rank">🥉 БРОНЗА</div>
+                    <div>💎 <span id="coins">0</span></div>
                 </div>
-                <button class="upgrade-btn" id="upgrade-tap" data-cost="50">50 💎</button>
-            </div>
-            <div class="upgrade-item">
-                <div class="upgrade-info">
-                    <div class="upgrade-name">⚡ Автокликер</div>
-                    <div class="upgrade-desc">+1 монета в секунду</div>
+                <div class="level-info">
+                    <span>⭐ Уровень <span id="level">1</span></span>
+                    <span id="rank-progress">0/1000</span>
                 </div>
-                <button class="upgrade-btn" id="upgrade-auto" data-cost="100">100 💎</button>
-            </div>
-            <div class="upgrade-item">
-                <div class="upgrade-info">
-                    <div class="upgrade-name">🎯 Критический удар</div>
-                    <div class="upgrade-desc">Шанс x3 урона</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="level-progress" style="width: 0%"></div>
                 </div>
-                <button class="upgrade-btn" id="upgrade-crit" data-cost="200">200 💎</button>
+            </div>
+            
+            <!-- ОСНОВНОЙ ЭЛЕМЕНТ -->
+            <div class="tap-area">
+                <div class="ton-coin" id="coin-button">
+                    <div class="coin-front">TON</div>
+                    <div class="coin-back">💰</div>
+                    <div class="coin-pulse"></div>
+                </div>
+            </div>
+            
+            <!-- СТАТИСТИКА -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div>⚡ Сила тапа</div>
+                    <div class="stat-value" id="tap-power">1</div>
+                </div>
+                <div class="stat-card">
+                    <div>👆 Всего тапов</div>
+                    <div class="stat-value" id="total-taps">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>🤖 Автокликеры</div>
+                    <div class="stat-value" id="auto-clickers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>💰 В секунду</div>
+                    <div class="stat-value" id="income-per-second">0</div>
+                </div>
+            </div>
+            
+            <!-- Улучшения -->
+            <div class="upgrades-section">
+                <h3 style="margin-bottom: 15px; text-align: center;">🛠 Улучшения</h3>
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">💪 Усилитель тапа</div>
+                        <div class="upgrade-desc">+1 к силе за клик</div>
+                    </div>
+                    <button class="upgrade-btn" id="upgrade-tap" data-cost="50">50 💎</button>
+                </div>
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">⚡ Автокликер</div>
+                        <div class="upgrade-desc">+1 монета в секунду</div>
+                    </div>
+                    <button class="upgrade-btn" id="upgrade-auto" data-cost="100">100 💎</button>
+                </div>
+                <div class="upgrade-item">
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">🎯 Критический удар</div>
+                        <div class="upgrade-desc">Шанс x3 урона</div>
+                    </div>
+                    <button class="upgrade-btn" id="upgrade-crit" data-cost="200">200 💎</button>
+                </div>
+            </div>
+
+            <!-- БЕТА-УВЕДОМЛЕНИЕ -->
+            <div class="beta-notice">
+                <strong>🎮 БЕТА-ВЕРСИЯ</strong><br>
+                Ваш прогресс сохраняется на этом устройстве.<br>
+                Скоро: глобальный рейтинг и синхронизация!
             </div>
         </div>
-        
-        <!-- ПРИГЛАШЕНИЕ ДРУЗЕЙ -->
-        <div class="invite-section">
-            <h3 style="margin-bottom: 15px;">👥 Пригласи друзей</h3>
-            <p style="margin-bottom: 15px; font-size: 14px; opacity: 0.9;">
-                Получи <strong>100 монет</strong> сейчас и <strong>50 монет</strong> за каждого друга!
-            </p>
-            <button class="invite-btn" id="invite-button">
-                📤 Пригласить через Telegram
-            </button>
+
+        <!-- СЕКЦИЯ ЛИДЕРБОРДА -->
+        <div id="leaderboard-section" class="section">
+            <div class="leaderboard-container">
+                <h3 style="text-align: center; margin-bottom: 15px;">🏆 ТОП-50 ИГРОКОВ</h3>
+                <div id="leaderboard-list">
+                    <!-- Лидерборд будет заполняться динамически -->
+                </div>
+            </div>
         </div>
-        
-        <!-- Достижения -->
-        <div class="achievements-section">
-            <h3 style="margin-bottom: 15px; text-align: center;">🏆 Достижения</h3>
-            <div class="achievement locked" id="achieve-100">
-                <span class="achievement-icon">🥉</span>
-                <span>100 тапов (Награда: 50 💎)</span>
-            </div>
-            <div class="achievement locked" id="achieve-500">
-                <span class="achievement-icon">🥈</span>
-                <span>500 тапов (Награда: 200 💎)</span>
-            </div>
-            <div class="achievement locked" id="achieve-1000">
-                <span class="achievement-icon">🥇</span>
-                <span>1000 тапов (Награда: 500 💎)</span>
-            </div>
-            <div class="achievement locked" id="achieve-combo">
-                <span class="achievement-icon">🔥</span>
-                <span>Комбо x10 (Награда: 300 💎)</span>
+
+        <!-- СЕКЦИЯ ПРОФИЛЯ -->
+        <div id="profile-section" class="section">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <h3 id="profile-name">👤 Игрок</h3>
+                    <div class="player-rank" id="profile-rank">🥉 БРОНЗА</div>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div>👆 Всего тапов</div>
+                        <div class="stat-value" id="profile-taps">0</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div>⭐ Уровень</div>
+                        <div class="stat-value" id="profile-level">1</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div>⚡ Сила тапа</div>
+                        <div class="stat-value" id="profile-power">1</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div>🤖 Автокликеры</div>
+                        <div class="stat-value" id="profile-autoclickers">0</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div>🎯 Крит. шанс</div>
+                        <div class="stat-value" id="profile-crit">0%</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div>🏆 Достижения</div>
+                        <div class="stat-value" id="profile-achievements">0</div>
+                    </div>
+                </div>
+
+                <div class="beta-notice">
+                    <strong>💎 СТАТУС ОСНОВАТЕЛЯ</strong><br>
+                    Вы среди первых игроков TON Tap Empire!<br>
+                    Ваше имя войдет в историю игры!
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // СИСТЕМА РАНГОВ
+        const rankSystem = {
+            BRONZE: { 
+                minScore: 0, 
+                color: "#CD7F32", 
+                badge: "🥉",
+                name: "БРОНЗА",
+                class: "rank-bronze",
+                badgeClass: "badge-bronze"
+            },
+            SILVER: { 
+                minScore: 1000, 
+                color: "#C0C0C0", 
+                badge: "🥈", 
+                name: "СЕРЕБРО",
+                class: "rank-silver", 
+                badgeClass: "badge-silver"
+            },
+            GOLD: { 
+                minScore: 5000, 
+                color: "#FFD700", 
+                badge: "🥇", 
+                name: "ЗОЛОТО",
+                class: "rank-gold",
+                badgeClass: "badge-gold"
+            },
+            PLATINUM: { 
+                minScore: 20000, 
+                color: "#E5E4E2", 
+                badge: "💠", 
+                name: "ПЛАТИНА",
+                class: "rank-platinum",
+                badgeClass: "badge-platinum"
+            },
+            DIAMOND: { 
+                minScore: 50000, 
+                color: "#B9F2FF", 
+                badge: "💎", 
+                name: "АЛМАЗ",
+                class: "rank-diamond",
+                badgeClass: "badge-diamond"
+            }
+        };
+
         // Игровые переменные
         let coins = 0;
         let tapPower = 1;
@@ -528,67 +631,13 @@
         let level = 1;
         let levelProgress = 0;
         let autoClickers = 0;
-        let boostActive = false;
-        let coinRotation = 0;
-        let lastPassiveIncomeTime = Date.now();
+        let critChance = 0;
+        let currentRank = 'BRONZE';
         
-        // НОВЫЕ СИСТЕМЫ!
-        let combo = 0;
-        let comboTimeout;
-        let critChance = 0; // Шанс критического удара
-        let lastTapTime = 0;
-        let eventCooldown = 0;
-        
-        // Достижения
-        const achievements = {
-            100: { claimed: false, reward: 50 },
-            500: { claimed: false, reward: 200 },
-            1000: { claimed: false, reward: 500 },
-            combo: { claimed: false, reward: 300 }
-        };
-        
-        // СЛУЧАЙНЫЕ ИВЕНТЫ
-        const randomEvents = [
-            {
-                name: "💰 Золотой дождь",
-                description: "Все тапы дают x3 монеты на 30 секунд!",
-                chance: 0.02, // 2% шанс при тапе
-                effect: function() {
-                    const oldPower = tapPower;
-                    tapPower *= 3;
-                    showEventNotification(this.name, this.description);
-                    setTimeout(() => {
-                        tapPower = oldPower;
-                        showNotification("⚡ Золотой дождь закончился");
-                    }, 30000);
-                }
-            },
-            {
-                name: "🎰 Счастливый тап", 
-                description: "Случайный бонус от x2 до x10!",
-                chance: 0.03,
-                effect: function() {
-                    const multiplier = Math.floor(Math.random() * 9) + 2;
-                    const bonus = tapPower * multiplier;
-                    coins += bonus;
-                    showEventNotification(this.name, `Ты получил ${multiplier}x бонус: +${bonus} монет!`);
-                }
-            },
-            {
-                name: "🤖 Завод автокликеров",
-                description: "Твои автокликеры работают в 2 раза быстрее 1 минуту!",
-                chance: 0.015,
-                effect: function() {
-                    passiveIncome *= 2;
-                    showEventNotification(this.name, this.description);
-                    setTimeout(() => {
-                        passiveIncome /= 2;
-                        showNotification("⚙️ Завод закрылся");
-                    }, 60000);
-                }
-            }
-        ];
-        
+        // ЛИДЕРБОРД (локальный демо)
+        let leaderboard = [];
+        const MAX_LEADERBOARD_SIZE = 50;
+
         // Инициализация Telegram
         let tg = window.Telegram.WebApp;
         
@@ -600,13 +649,16 @@
             const user = tg.initDataUnsafe.user;
             if (user) {
                 loadProgress(user.id);
+                initializeLeaderboard(user.id, user.first_name || 'Игрок');
+            } else {
+                initializeLeaderboard('demo_user', 'Демо-Игрок');
             }
             
             setupEventListeners();
             startPassiveIncome();
             startCoinAnimation();
             updateUI();
-            updateCoinAppearance();
+            updateRank();
         }
         
         function setupEventListeners() {
@@ -617,102 +669,37 @@
             document.getElementById('upgrade-tap').addEventListener('click', () => buyUpgrade('tap'));
             document.getElementById('upgrade-auto').addEventListener('click', () => buyUpgrade('auto'));
             document.getElementById('upgrade-crit').addEventListener('click', () => buyUpgrade('crit'));
-            
-            // Приглашение друзей
-            document.getElementById('invite-button').addEventListener('click', inviteFriends);
         }
-        
+
         function handleTap(event) {
-            const now = Date.now();
-            
-            // КОМБО-СИСТЕМА
-            if (now - lastTapTime < 2000) { // 2 секунды на комбо
-                combo++;
-                clearTimeout(comboTimeout);
-            } else {
-                combo = 1;
-            }
-            
-            comboTimeout = setTimeout(() => {
-                if (combo >= 10 && !achievements.combo.claimed) {
-                    achievements.combo.claimed = true;
-                    coins += achievements.combo.reward;
-                    document.getElementById('achieve-combo').classList.remove('locked');
-                    document.getElementById('achieve-combo').classList.add('unlocked');
-                    showNotification(`🎯 Комбо достижение! +${achievements.combo.reward} монет!`);
-                }
-                combo = 0;
-                updateComboDisplay();
-            }, 2000);
-            
-            lastTapTime = now;
-            updateComboDisplay();
-            
             // Вращаем монету
-            coinRotation += 180;
+            const coinRotation = Date.now() % 360;
             document.getElementById('coin-button').style.transform = `rotateY(${coinRotation}deg)`;
             
-            // РАСЧЕТ УРОНА С КРИТАМИ И КОМБО
+            // Расчет урона
             let earned = tapPower;
-            let isCritical = false;
-            let isComboBonus = false;
-            
-            // Критический удар
             if (Math.random() < critChance) {
-                earned *= 3;
-                isCritical = true;
-            }
-            
-            // Бонус комбо (после 5 тапов подряд)
-            if (combo >= 5) {
-                earned += Math.floor(combo / 5);
-                isComboBonus = true;
-            }
-            
-            // СЛУЧАЙНЫЕ ИВЕНТЫ
-            if (eventCooldown <= 0) {
-                randomEvents.forEach(event => {
-                    if (Math.random() < event.chance) {
-                        event.effect();
-                        eventCooldown = 60; // 60 тапов до следующего ивента
-                    }
-                });
-            } else {
-                eventCooldown--;
+                earned *= 3; // Критический удар
             }
             
             coins += earned;
             totalTaps++;
             levelProgress += earned;
             
-            // СОЗДАЕМ ЭФФЕКТЫ
-            createTapEffect(event, earned, isCritical, isComboBonus);
+            // Создаем эффект
+            createTapEffect(event, earned);
             
-            // Проверяем достижения
-            checkAchievements();
-            
-            // Проверяем уровень
-            checkLevelUp();
-            
+            // Обновляем интерфейс
             updateUI();
+            updateRank();
+            updateLeaderboard();
             saveProgress();
         }
         
-        function createTapEffect(event, amount, isCritical = false, isComboBonus = false) {
+        function createTapEffect(event, amount) {
             const effect = document.createElement('div');
-            effect.className = 'tap-effect';
-            
-            if (isCritical) {
-                effect.className += ' critical';
-                effect.textContent = 'CRIT! +' + amount;
-            } else if (isComboBonus) {
-                effect.className += ' combo'; 
-                effect.textContent = 'COMBO +' + amount;
-            } else {
-                effect.className += ' normal';
-                effect.textContent = '+' + amount;
-            }
-            
+            effect.className = 'tap-effect normal';
+            effect.textContent = '+' + amount;
             effect.style.left = (event.clientX - 20) + 'px';
             effect.style.top = (event.clientY - 20) + 'px';
             document.querySelector('.tap-area').appendChild(effect);
@@ -720,85 +707,14 @@
             setTimeout(() => effect.remove(), 1000);
         }
         
-        function updateComboDisplay() {
-            const comboDisplay = document.getElementById('combo-display');
-            if (combo >= 3) {
-                comboDisplay.style.display = 'block';
-                comboDisplay.textContent = `Комбо: ${combo}x`;
-                comboDisplay.style.background = combo >= 10 ? 
-                    'linear-gradient(135deg, #ff0000, #ff6b6b)' :
-                    'linear-gradient(135deg, #ff6b6b, #ffd93d)';
-            } else {
-                comboDisplay.style.display = 'none';
-            }
-        }
-        
         function startCoinAnimation() {
             setInterval(() => {
-                if (!boostActive) {
-                    const coin = document.getElementById('coin-button');
-                    coin.style.transform = `rotateY(${coinRotation}deg) scale(1.03)`;
-                    setTimeout(() => {
-                        coin.style.transform = `rotateY(${coinRotation}deg) scale(1)`;
-                    }, 300);
-                }
+                const coin = document.getElementById('coin-button');
+                coin.style.transform = 'scale(1.03)';
+                setTimeout(() => {
+                    coin.style.transform = 'scale(1)';
+                }, 300);
             }, 3000);
-        }
-        
-        // ВИЗУАЛЬНАЯ ПРОГРЕССИЯ МОНЕТЫ
-        function updateCoinAppearance() {
-            const coinFront = document.getElementById('coin-front');
-            coinFront.className = 'coin-front';
-            
-            if (level >= 11) {
-                coinFront.classList.add('level-11');
-            } else if (level >= 6) {
-                coinFront.classList.add('level-6'); 
-            } else {
-                coinFront.classList.add('level-1');
-            }
-        }
-        
-        // СЛУЧАЙНЫЕ ИВЕНТЫ
-        function showEventNotification(title, description) {
-            document.getElementById('event-title').textContent = title;
-            document.getElementById('event-description').textContent = description;
-            document.getElementById('event-notification').style.display = 'block';
-        }
-        
-        function closeEvent() {
-            document.getElementById('event-notification').style.display = 'none';
-        }
-        
-        // ПАССИВНЫЙ ДОХОД
-        function startPassiveIncome() {
-            setInterval(() => {
-                if (passiveIncome > 0) {
-                    const now = Date.now();
-                    const timePassed = (now - lastPassiveIncomeTime) / 1000;
-                    
-                    if (timePassed >= 1) {
-                        const income = passiveIncome;
-                        coins += income;
-                        lastPassiveIncomeTime = now;
-                        
-                        showPassiveIncomeEffect(income);
-                        updateUI();
-                        saveProgress();
-                    }
-                }
-            }, 100);
-        }
-        
-        function showPassiveIncomeEffect(amount) {
-            const effect = document.createElement('div');
-            effect.className = 'passive-income-effect';
-            effect.textContent = `🤖 +${amount}`;
-            document.body.appendChild(effect);
-            
-            setTimeout(() => {
-                effect.remove();
-            }, 2000);
         }
         
         function buyUpgrade(type) {
@@ -813,138 +729,218 @@
                         tapPower += 1;
                         button.dataset.cost = Math.floor(cost * 1.5);
                         button.textContent = Math.floor(cost * 1.5) + ' 💎';
-                        showNotification('💪 Сила тапа увеличена!');
                         break;
                     case 'auto':
                         passiveIncome += 1;
                         autoClickers += 1;
                         button.dataset.cost = Math.floor(cost * 2);
                         button.textContent = Math.floor(cost * 2) + ' 💎';
-                        showNotification('🤖 Автокликер добавлен! +1/сек');
                         break;
                     case 'crit':
-                        critChance += 0.05; // +5% шанс крита
+                        critChance += 0.05;
                         button.dataset.cost = Math.floor(cost * 3);
                         button.textContent = Math.floor(cost * 3) + ' 💎';
-                        showNotification('🎯 Шанс критического удара увеличен!');
                         break;
                 }
                 
                 updateUI();
+                updateRank();
                 saveProgress();
-            } else {
-                showNotification('❌ Недостаточно монет!');
             }
         }
-        
-        function activateBoost() {
-            if (boostActive) return;
-            
-            boostActive = true;
-            document.getElementById('coin-button').style.filter = 'brightness(1.3)';
-            showNotification('🚀 Бустер активирован! x2 сила на 30 сек!');
-            
-            setTimeout(() => {
-                boostActive = false;
-                document.getElementById('coin-button').style.filter = 'brightness(1)';
-                showNotification('⏰ Бустер закончился');
-            }, 30000);
+
+        // СИСТЕМА РАНГОВ
+        function calculateRankScore() {
+            // Комплексный расчет рейтинга
+            return totalTaps + (level * 100) + (autoClickers * 50) + (tapPower * 10) + (critChance * 1000);
         }
-        
-        function inviteFriends() {
+
+        function updateRank() {
+            const score = calculateRankScore();
+            let newRank = 'BRONZE';
+            
+            // Определяем ранг по score
+            for (const [rank, data] of Object.entries(rankSystem)) {
+                if (score >= data.minScore) {
+                    newRank = rank;
+                }
+            }
+            
+            if (newRank !== currentRank) {
+                currentRank = newRank;
+                // Можно добавить анимацию смены ранга
+            }
+            
+            // Обновляем отображение ранга
+            const rankData = rankSystem[currentRank];
+            const rankElement = document.getElementById('player-rank');
+            rankElement.innerHTML = `${rankData.badge} <span class="${rankData.class}">${rankData.name}</span>`;
+            
+            // Обновляем прогресс до следующего ранга
+            const nextRank = getNextRank(currentRank);
+            if (nextRank) {
+                const progress = ((score - rankData.minScore) / (nextRank.minScore - rankData.minScore)) * 100;
+                document.getElementById('rank-progress').textContent = 
+                    `${score - rankData.minScore}/${nextRank.minScore - rankData.minScore}`;
+            } else {
+                document.getElementById('rank-progress').textContent = 'МАКСИМУМ';
+            }
+        }
+
+        function getNextRank(currentRank) {
+            const ranks = Object.keys(rankSystem);
+            const currentIndex = ranks.indexOf(currentRank);
+            return currentIndex < ranks.length - 1 ? rankSystem[ranks[currentIndex + 1]] : null;
+        }
+
+        // ЛИДЕРБОРД
+        function initializeLeaderboard(userId, userName) {
+            // Загружаем существующий лидерборд или создаем демо-данные
+            const savedLeaderboard = localStorage.getItem('ton_tap_leaderboard');
+            if (savedLeaderboard) {
+                leaderboard = JSON.parse(savedLeaderboard);
+            } else {
+                // Создаем демо-лидерборд
+                leaderboard = generateDemoLeaderboard();
+                leaderboard.push({
+                    id: userId,
+                    name: userName,
+                    score: calculateRankScore(),
+                    rank: currentRank
+                });
+                updateLeaderboard();
+            }
+        }
+
+        function generateDemoLeaderboard() {
+            const demoPlayers = [];
+            const names = ['Alex', 'Maria', 'John', 'Anna', 'Mike', 'Sarah', 'David', 'Emma', 'James', 'Lisa'];
+            
+            for (let i = 0; i < 49; i++) {
+                demoPlayers.push({
+                    id: 'demo_' + i,
+                    name: names[i % names.length] + (Math.floor(i / names.length) + 1),
+                    score: Math.floor(Math.random() * 100000) + 1000,
+                    rank: Object.keys(rankSystem)[Math.floor(Math.random() * Object.keys(rankSystem).length)]
+                });
+            }
+            
+            return demoPlayers.sort((a, b) => b.score - a.score).slice(0, MAX_LEADERBOARD_SIZE - 1);
+        }
+
+        function updateLeaderboard() {
             const user = tg.initDataUnsafe.user;
-            if (!user) {
-                showNotification('❌ Нужно войти в Telegram');
-                return;
-            }
+            if (!user) return;
+
+            // Обновляем score текущего игрока
+            const userScore = calculateRankScore();
+            const userIndex = leaderboard.findIndex(p => p.id === user.id);
             
-            const referralCode = user.id;
-            const shareText = `🎮 Присоединяйся к TON Tap Empire! \n\nЗарабатывай монеты, улучшай свою силу и соревнуйся с друзьями! \n\nНачни играть: https://t.me/my_game_test_123_bot?start=ref_${referralCode}`;
-            
-            if (tg.share) {
-                tg.share(shareText);
+            if (userIndex !== -1) {
+                leaderboard[userIndex].score = userScore;
+                leaderboard[userIndex].rank = currentRank;
             } else {
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'TON Tap Empire',
-                        text: shareText
-                    });
-                } else {
-                    navigator.clipboard.writeText(shareText).then(() => {
-                        showNotification('📋 Ссылка скопирована! Отправь другу в Telegram');
-                    });
-                }
+                leaderboard.push({
+                    id: user.id,
+                    name: user.first_name || 'Игрок',
+                    score: userScore,
+                    rank: currentRank
+                });
             }
             
-            showNotification('Пригласи друга и получи 100 монет когда он присоединится! 🎁');
+            // Сортируем и обрезаем лидерборд
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, MAX_LEADERBOARD_SIZE);
+            
+            // Сохраняем и отображаем
+            localStorage.setItem('ton_tap_leaderboard', JSON.stringify(leaderboard));
+            renderLeaderboard();
         }
-        
-        function checkAchievements() {
-            Object.keys(achievements).forEach(key => {
-                if (key === 'combo') return; // Комбо обрабатывается отдельно
-                
-                const achievement = achievements[key];
-                if (!achievement.claimed && totalTaps >= parseInt(key)) {
-                    achievement.claimed = true;
-                    coins += achievement.reward;
-                    
-                    const achieveElement = document.getElementById(`achieve-${key}`);
-                    achieveElement.classList.remove('locked');
-                    achieveElement.classList.add('unlocked');
-                    
-                    showNotification(`🎉 Достижение! +${achievement.reward} монет!`);
-                }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+            
+            leaderboard.forEach((player, index) => {
+                const rankData = rankSystem[player.rank] || rankSystem.BRONZE;
+                const item = document.createElement('div');
+                item.className = `leaderboard-item ${index < 3 ? 'rank-' + (index + 1) : ''}`;
+                item.innerHTML = `
+                    <div class="leaderboard-rank">${index + 1}</div>
+                    <div class="leaderboard-player">
+                        <span class="${rankData.class}">${player.name}</span>
+                        <div class="rank-badge ${rankData.badgeClass}">${rankData.badge} ${rankData.name}</div>
+                    </div>
+                    <div class="leaderboard-score">${player.score.toLocaleString()}</div>
+                `;
+                list.appendChild(item);
             });
         }
-        
-        function checkLevelUp() {
-            const needed = level * 100;
-            if (levelProgress >= needed) {
-                level++;
-                levelProgress = 0;
-                tapPower += Math.floor(level / 2);
-                
-                // ВИЗУАЛЬНОЕ ОБНОВЛЕНИЕ ПРИ ЛЕВЕЛ-АПЕ
-                updateCoinAppearance();
-                
-                showNotification(`🎊 Уровень ${level}! Сила +${Math.floor(level / 2)}!`);
-                
-                // СПЕЦИАЛЬНЫЙ БОНУС НА КАЖДЫЙ 5-Й УРОВЕНЬ
-                if (level % 5 === 0) {
-                    const bonus = level * 10;
-                    coins += bonus;
-                    showNotification(`🏆 Юбилейный уровень! Бонус: +${bonus} монет!`);
-                }
+
+        // НАВИГАЦИЯ
+        function showSection(sectionName) {
+            // Скрываем все секции
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Убираем активный класс со всех вкладок
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Показываем нужную секцию
+            document.getElementById(sectionName + '-section').classList.add('active');
+            
+            // Активируем нужную вкладку
+            event.target.classList.add('active');
+            
+            // Обновляем данные в секциях
+            if (sectionName === 'profile') {
+                updateProfile();
+            } else if (sectionName === 'leaderboard') {
+                renderLeaderboard();
+            }
+        }
+
+        function updateProfile() {
+            const user = tg.initDataUnsafe.user;
+            if (user) {
+                document.getElementById('profile-name').textContent = `👤 ${user.first_name || 'Игрок'}`;
             }
             
-            const progressPercent = (levelProgress / (level * 100)) * 100;
-            document.getElementById('level-progress').style.width = progressPercent + '%';
+            const rankData = rankSystem[currentRank];
+            document.getElementById('profile-rank').innerHTML = 
+                `${rankData.badge} <span class="${rankData.class}">${rankData.name}</span>`;
+            
+            document.getElementById('profile-taps').textContent = totalTaps.toLocaleString();
+            document.getElementById('profile-level').textContent = level;
+            document.getElementById('profile-power').textContent = tapPower;
+            document.getElementById('profile-autoclickers').textContent = autoClickers;
+            document.getElementById('profile-crit').textContent = Math.round(critChance * 100) + '%';
         }
-        
-        function showNotification(message) {
-            if (tg.showPopup) {
-                tg.showPopup({
-                    title: 'Уведомление',
-                    message: message,
-                    buttons: [{ type: 'ok' }]
-                });
-            } else {
-                alert(message);
-            }
+
+        // ПАССИВНЫЙ ДОХОД
+        function startPassiveIncome() {
+            setInterval(() => {
+                if (passiveIncome > 0) {
+                    coins += passiveIncome;
+                    updateUI();
+                    updateLeaderboard();
+                    saveProgress();
+                }
+            }, 1000);
         }
         
         function updateUI() {
             document.getElementById('coins').textContent = coins;
             document.getElementById('tap-power').textContent = tapPower;
-            document.getElementById('total-taps').textContent = totalTaps;
+            document.getElementById('total-taps').textContent = totalTaps.toLocaleString();
             document.getElementById('auto-clickers').textContent = autoClickers;
             document.getElementById('income-per-second').textContent = passiveIncome;
             document.getElementById('level').textContent = level;
             
-            // Обновляем ранги
-            const ranks = ['Новичок', 'Любитель', 'Профи', 'Эксперт', 'Мастер'];
-            document.getElementById('rank').textContent = ranks[Math.min(level - 1, 4)];
-            
+            // Обновляем кнопки улучшений
             updateUpgradeButtons();
         }
         
@@ -959,7 +955,7 @@
         
         function loadProgress(userId) {
             try {
-                const saved = localStorage.getItem(`ton_empire_${userId}`);
+                const saved = localStorage.getItem(`ton_tap_player_${userId}`);
                 if (saved) {
                     const data = JSON.parse(saved);
                     coins = data.coins || 0;
@@ -990,7 +986,7 @@
                         levelProgress,
                         critChance
                     };
-                    localStorage.setItem(`ton_empire_${user.id}`, JSON.stringify(data));
+                    localStorage.setItem(`ton_tap_player_${user.id}`, JSON.stringify(data));
                 }
             } catch (e) {
                 console.error('Error saving progress:', e);
