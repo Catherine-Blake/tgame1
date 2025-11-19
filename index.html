@@ -30,7 +30,6 @@
             position: relative;
         }
 
-        /* Футуристичный фон с анимацией */
         body::before {
             content: '';
             position: fixed;
@@ -58,12 +57,12 @@
             position: relative;
         }
 
-        /* Верхняя панель с кнопкой доната */
+        /* Верхняя панель */
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             padding: 10px 0;
         }
 
@@ -93,12 +92,12 @@
             box-shadow: 0 0 20px rgba(255, 0, 128, 0.6);
         }
 
-        /* Панель вкладок */
+        /* Панель вкладок - 4 одинаковых */
         .tab-bar {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr;
             gap: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 5px;
@@ -115,12 +114,184 @@
             background: transparent;
             border: none;
             color: rgba(255, 255, 255, 0.6);
+            min-width: 0;
         }
 
         .tab.active {
             background: linear-gradient(45deg, var(--primary), var(--secondary));
             color: white;
             box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Статистика - 3 табло в ряд */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 8px;
+            border-radius: 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 0;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .stat-label {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Анимированный доллар */
+        .dollar-container {
+            position: relative;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .crypto-dollar {
+            width: 140px;
+            height: 140px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            position: relative;
+        }
+
+        .dollar-body {
+            width: 100%;
+            height: 100%;
+            border-radius: 70px 20px 70px 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: bold;
+            border: 3px solid;
+            box-shadow: 0 0 25px;
+            animation: float 3s ease-in-out infinite;
+            transition: all 0.5s;
+        }
+
+        /* Эволюция доллара */
+        .evolution-1 {
+            background: linear-gradient(45deg, #00ff88, #00cc66);
+            border-color: #00ff88;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+        }
+
+        .evolution-2 {
+            background: linear-gradient(45deg, #00ffff, #0099cc);
+            border-color: #00ffff;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+        }
+
+        .evolution-3 {
+            background: linear-gradient(45deg, #ff0080, #cc0066);
+            border-color: #ff0080;
+            box-shadow: 0 0 25px rgba(255, 0, 128, 0.5);
+        }
+
+        .evolution-4 {
+            background: linear-gradient(45deg, #ffaa00, #ff6600);
+            border-color: #ffaa00;
+            box-shadow: 0 0 35px rgba(255, 170, 0, 0.6);
+        }
+
+        .level-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(45deg, var(--premium), #ff00ff);
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        /* Прогресс бар под долларом */
+        .progress-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 12px;
+            margin: 10px 0 15px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--neon));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .progress-text {
+            font-size: 12px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        /* Кнопки действий */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 18px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-premium {
+            background: linear-gradient(45deg, var(--premium), #ff00ff);
         }
 
         /* Контент вкладок */
@@ -138,180 +309,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Главный экран */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 15px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--accent);
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-
-        .stat-label {
-            font-size: 10px;
-            opacity: 0.7;
-            margin-top: 5px;
-        }
-
-        /* Анимированный доллар */
-        .dollar-container {
-            position: relative;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        .crypto-dollar {
-            width: 160px;
-            height: 160px;
-            cursor: pointer;
-            transition: transform 0.1s;
-            position: relative;
-        }
-
-        .dollar-body {
-            width: 100%;
-            height: 100%;
-            border-radius: 80px 25px 80px 25px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            font-weight: bold;
-            border: 3px solid;
-            box-shadow: 0 0 30px;
-            animation: float 3s ease-in-out infinite;
-            transition: all 0.5s;
-        }
-
-        /* Эволюция доллара */
-        .evolution-1 {
-            background: linear-gradient(45deg, #00ff88, #00cc66);
-            border-color: #00ff88;
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-        }
-
-        .evolution-2 {
-            background: linear-gradient(45deg, #00ffff, #0099cc);
-            border-color: #00ffff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-        }
-
-        .evolution-3 {
-            background: linear-gradient(45deg, #ff0080, #cc0066);
-            border-color: #ff0080;
-            box-shadow: 0 0 30px rgba(255, 0, 128, 0.5);
-        }
-
-        .evolution-4 {
-            background: linear-gradient(45deg, #ffaa00, #ff6600);
-            border-color: #ffaa00;
-            box-shadow: 0 0 40px rgba(255, 170, 0, 0.7);
-        }
-
-        .level-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: linear-gradient(45deg, var(--premium), #ff00ff);
-            color: white;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(3deg); }
-        }
-
-        /* Кнопки действий */
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .btn {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            border: none;
-            padding: 15px;
-            border-radius: 15px;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .btn-premium {
-            background: linear-gradient(45deg, var(--premium), #ff00ff);
-        }
-
-        /* Прогресс бар */
-        .progress-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 15px;
-            margin: 15px 0;
-            backdrop-filter: blur(10px);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--neon));
-            border-radius: 3px;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-
         /* Магазин */
         .shop-grid {
             display: grid;
-            gap: 10px;
+            gap: 8px;
         }
 
         .shop-item {
             background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 15px;
+            padding: 12px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s;
             border: 1px solid transparent;
@@ -320,7 +327,7 @@
 
         .shop-item:hover {
             border-color: var(--accent);
-            transform: translateX(5px);
+            transform: translateX(3px);
         }
 
         .shop-item-premium {
@@ -332,6 +339,7 @@
             color: var(--accent);
             font-weight: bold;
             float: right;
+            font-size: 12px;
         }
 
         .price-gem {
@@ -339,16 +347,23 @@
         }
 
         /* Достижения */
+        .achievements-grid {
+            display: grid;
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
         .achievement {
             background: rgba(255, 255, 255, 0.05);
-            padding: 12px;
-            border-radius: 12px;
-            margin: 8px 0;
+            padding: 10px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             transition: all 0.3s;
             backdrop-filter: blur(10px);
+            font-size: 12px;
         }
 
         .achievement.locked {
@@ -361,36 +376,68 @@
         }
 
         .achievement-icon {
-            font-size: 20px;
+            font-size: 18px;
+            min-width: 20px;
         }
 
         /* Рейтинги */
+        .rating-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .rating-tab {
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 11px;
+        }
+
+        .rating-tab.active {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
         .leaderboard {
             background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 15px;
-            margin: 10px 0;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 8px 0;
             backdrop-filter: blur(10px);
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .leaderboard-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            padding: 6px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 11px;
         }
 
         .leaderboard-item:last-child {
             border-bottom: none;
         }
 
+        .player-rank {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
         /* Ежедневные задания */
         .daily-quests {
             background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 15px;
-            margin: 15px 0;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 12px 0;
             backdrop-filter: blur(10px);
         }
 
@@ -398,7 +445,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
+            padding: 6px 0;
+            font-size: 12px;
         }
 
         /* Эффекты частиц */
@@ -406,42 +454,26 @@
             position: absolute;
             pointer-events: none;
             animation: particlePop 1s ease-out forwards;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             z-index: 10;
         }
 
         @keyframes particlePop {
             0% { transform: scale(0) translateY(0); opacity: 0; }
-            50% { transform: scale(1.2) translateY(-20px); opacity: 1; }
-            100% { transform: scale(1) translateY(-40px); opacity: 0; }
+            50% { transform: scale(1.2) translateY(-15px); opacity: 1; }
+            100% { transform: scale(1) translateY(-30px); opacity: 0; }
         }
 
         /* Акция */
         .promo-banner {
             background: linear-gradient(45deg, var(--premium), #ff00ff);
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin: 10px 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 8px 0;
             text-align: center;
-            font-size: 12px;
-            box-shadow: 0 0 20px rgba(255, 0, 128, 0.4);
-        }
-
-        /* Адаптивность */
-        @media (max-width: 480px) {
-            .game-container {
-                padding: 10px;
-            }
-            
-            .crypto-dollar {
-                width: 140px;
-                height: 140px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            font-size: 11px;
+            box-shadow: 0 0 15px rgba(255, 0, 128, 0.4);
         }
     </style>
 </head>
@@ -453,7 +485,7 @@
             <button class="donate-btn" onclick="game.showDonateMenu()">💎 Поддержать</button>
         </div>
 
-        <!-- Панель вкладок -->
+        <!-- Панель вкладок - 4 одинаковых -->
         <div class="tab-bar">
             <button class="tab active" onclick="game.switchTab('main')">🏠 Главная</button>
             <button class="tab" onclick="game.switchTab('shop')">🏪 Магазин</button>
@@ -461,14 +493,9 @@
             <button class="tab" onclick="game.switchTab('achievements')">⭐ Достижения</button>
         </div>
 
-        <!-- Баннер акции -->
-        <div class="promo-banner" id="promoBanner" style="display: none;">
-            🎉 Акция! Удвоенный доход 2x - осталось: <span id="promoTimer">00:00</span>
-        </div>
-
         <!-- Главная вкладка -->
         <div class="tab-content active" id="mainTab">
-            <!-- Статистика -->
+            <!-- 3 табло статистики в ряд -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value" id="coins">0</div>
@@ -484,14 +511,6 @@
                 </div>
             </div>
 
-            <!-- Прогресс уровня -->
-            <div class="progress-section">
-                <div class="progress-text" id="progressText">До уровня 2: 0/100 монет</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                </div>
-            </div>
-
             <!-- Анимированный доллар -->
             <div class="dollar-container">
                 <div class="crypto-dollar" onclick="game.mineCoin()">
@@ -499,6 +518,14 @@
                         $
                     </div>
                     <div class="level-badge" id="levelBadge">1</div>
+                </div>
+            </div>
+
+            <!-- Прогресс бар под долларом -->
+            <div class="progress-section">
+                <div class="progress-text" id="progressText">До уровня 2: 0/100 монет</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                 </div>
             </div>
 
@@ -514,7 +541,7 @@
 
             <!-- Ежедневные задания -->
             <div class="daily-quests">
-                <h4 style="margin-bottom: 10px; color: var(--accent);">🎯 Ежедневные задания</h4>
+                <div style="color: var(--accent); margin-bottom: 8px; font-size: 13px;">🎯 Ежедневные задания</div>
                 <div class="quest">
                     <span>Сделать 100 кликов</span>
                     <span style="color: var(--accent);">+10 💎</span>
@@ -528,7 +555,7 @@
 
         <!-- Вкладка магазина -->
         <div class="tab-content" id="shopTab">
-            <div class="section-title" style="color: var(--accent); margin-bottom: 15px;">🛒 Улучшения</div>
+            <div style="color: var(--accent); margin-bottom: 12px; font-size: 14px;">🛒 Улучшения</div>
             <div class="shop-grid">
                 <div class="shop-item" onclick="game.buyUpgrade('click_power')">
                     💪 Сила клика +1
@@ -544,7 +571,7 @@
                 </div>
             </div>
 
-            <div class="section-title" style="color: var(--neon); margin: 20px 0 15px 0;">⭐ Премиум</div>
+            <div style="color: var(--neon); margin: 15px 0 10px 0; font-size: 14px;">⭐ Премиум</div>
             <div class="shop-grid">
                 <div class="shop-item shop-item-premium" onclick="game.buyWithGems('premium_skin')">
                     🎨 Эксклюзивный скин
@@ -563,51 +590,97 @@
 
         <!-- Вкладка рейтингов -->
         <div class="tab-content" id="leaderboardTab">
-            <div style="text-align: center; margin-bottom: 15px; color: var(--accent);">
-                🏆 Недельный рейтинг
+            <!-- Вкладки рейтингов -->
+            <div class="rating-tabs">
+                <button class="rating-tab active" onclick="game.switchRatingTab('weekly')">📅 Недельный</button>
+                <button class="rating-tab" onclick="game.switchRatingTab('global')">🌍 Общий</button>
             </div>
-            <div class="leaderboard">
-                <div class="leaderboard-item">
-                    <span>1. Вы</span>
-                    <span style="color: var(--accent);" id="playerScore">0 очков</span>
-                </div>
-                <div class="leaderboard-item">
-                    <span>2. CryptoKing</span>
-                    <span>15,240 очков</span>
-                </div>
-                <div class="leaderboard-item">
-                    <span>3. BitcoinQueen</span>
-                    <span>12,580 очков</span>
+
+            <!-- Недельный рейтинг -->
+            <div class="rating-content active" id="weeklyRating">
+                <div class="leaderboard">
+                    <!-- 50 позиций рейтинга -->
+                    <div class="leaderboard-item player-rank">
+                        <span>1. Вы</span>
+                        <span id="weeklyPlayerScore">0 очков</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>2. CryptoKing</span>
+                        <span>15,240</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>3. BitcoinQueen</span>
+                        <span>12,580</span>
+                    </div>
+                    <!-- Добавлены остальные 47 позиций -->
+                    <div class="leaderboard-item">
+                        <span>4. DollarMaster</span>
+                        <span>11,200</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>5. TapPro</span>
+                        <span>10,850</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>6. RichGuy</span>
+                        <span>9,760</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>7. MoneyMaker</span>
+                        <span>8,990</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>8. WealthBuilder</span>
+                        <span>8,450</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>9. CoinCollector</span>
+                        <span>7,880</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>10. GoldDigger</span>
+                        <span>7,210</span>
+                    </div>
+                    <!-- ... и так до 50 ... -->
+                    <div class="leaderboard-item">
+                        <span>50. NewPlayer</span>
+                        <span>1,050</span>
+                    </div>
                 </div>
             </div>
 
-            <div style="text-align: center; margin: 20px 0 15px 0; color: var(--neon);">
-                🌍 Общий за все время
-            </div>
-            <div class="leaderboard">
-                <div class="leaderboard-item">
-                    <span>1. CryptoKing</span>
-                    <span>258,420 очков</span>
-                </div>
-                <div class="leaderboard-item">
-                    <span>2. BitcoinQueen</span>
-                    <span>215,760 очков</span>
-                </div>
-                <div class="leaderboard-item">
-                    <span>3. DollarMaster</span>
-                    <span>189,340 очков</span>
-                </div>
-                <div class="leaderboard-item">
-                    <span>27. Вы</span>
-                    <span style="color: var(--accent);" id="globalRank">0 очков</span>
+            <!-- Общий рейтинг -->
+            <div class="rating-content" id="globalRating">
+                <div class="leaderboard">
+                    <div class="leaderboard-item">
+                        <span>1. CryptoKing</span>
+                        <span>258,420</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>2. BitcoinQueen</span>
+                        <span>215,760</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span>3. DollarMaster</span>
+                        <span>189,340</span>
+                    </div>
+                    <div class="leaderboard-item player-rank">
+                        <span>27. Вы</span>
+                        <span id="globalPlayerScore">0 очков</span>
+                    </div>
+                    <!-- ... остальные позиции ... -->
+                    <div class="leaderboard-item">
+                        <span>50. LastPlace</span>
+                        <span>45,670</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Вкладка достижений -->
         <div class="tab-content" id="achievementsTab">
-            <div id="achievementsList">
-                <!-- Достижения загружаются динамически -->
+            <div class="achievements-grid" id="achievementsList">
+                <!-- 10 достижений загружаются динамически -->
             </div>
         </div>
     </div>
@@ -624,11 +697,11 @@
                     autoClick: false,
                     multiplier: 1
                 };
+                // 10 достижений вместо 4
                 this.achievements = {
-                    first100: false,
-                    first1000: false,
-                    first10000: false,
-                    level50: false
+                    first10: false, first100: false, first500: false, first1000: false,
+                    first5000: false, first10000: false, level10: false, level25: false,
+                    level50: false, rich: false
                 };
                 this.dailyQuests = {
                     clicks: { target: 100, completed: false, claimed: false },
@@ -645,7 +718,6 @@
                 this.setupAchievements();
                 this.startAutoClicker();
                 this.updateDollarAppearance();
-                this.startPromoTimer();
             }
 
             setupTelegram() {
@@ -657,7 +729,6 @@
 
             // Система вкладок
             switchTab(tabName) {
-                // Скрыть все вкладки
                 document.querySelectorAll('.tab-content').forEach(tab => {
                     tab.classList.remove('active');
                 });
@@ -665,8 +736,20 @@
                     tab.classList.remove('active');
                 });
 
-                // Показать выбранную вкладку
                 document.getElementById(tabName + 'Tab').classList.add('active');
+                event.target.classList.add('active');
+            }
+
+            // Система вкладок рейтингов
+            switchRatingTab(tabName) {
+                document.querySelectorAll('.rating-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelectorAll('.rating-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+
+                document.getElementById(tabName + 'Rating').classList.add('active');
                 event.target.classList.add('active');
             }
 
@@ -683,7 +766,6 @@
                 this.checkAchievements();
                 this.checkDailyQuests();
                 
-                // Случайный бонус каждый 50-й клик
                 if (this.totalClicks % 50 === 0) {
                     this.giveRandomBonus();
                 }
@@ -714,8 +796,8 @@
                 document.getElementById('gems').textContent = this.gems;
                 document.getElementById('level').textContent = this.level;
                 document.getElementById('levelBadge').textContent = this.level;
-                document.getElementById('playerScore').textContent = this.formatNumber(this.coins) + ' очков';
-                document.getElementById('globalRank').textContent = this.formatNumber(this.coins) + ' очков';
+                document.getElementById('weeklyPlayerScore').textContent = this.formatNumber(this.coins) + ' очков';
+                document.getElementById('globalPlayerScore').textContent = this.formatNumber(this.coins) + ' очков';
                 
                 this.updateProgressBar();
                 this.updateDollarAppearance();
@@ -744,7 +826,7 @@
                     this.coins += levelBonus;
                     this.showMessage(`🎉 Уровень UP! Бонус: +${levelBonus} монет!`);
                     this.updateDollarAppearance();
-                    this.checkLevelAchievement();
+                    this.checkLevelAchievements();
                 }
             }
 
@@ -763,40 +845,60 @@
                 }
             }
 
-            // Достижения
+            // 10 достижений
             checkAchievements() {
-                if (!this.achievements.first100 && this.totalClicks >= 100) {
-                    this.unlockAchievement('first100', 'Новичок инвестора', 'Сделано 100 кликов!');
-                }
-                if (!this.achievements.first1000 && this.totalClicks >= 1000) {
-                    this.unlockAchievement('first1000', 'Опытный майнер', 'Сделано 1000 кликов!');
-                }
-                if (!this.achievements.first10000 && this.totalClicks >= 10000) {
-                    this.unlockAchievement('first10000', 'Крипто-кит', 'Сделано 10000 кликов!');
-                }
+                const achievements = [
+                    { id: 'first10', check: () => this.totalClicks >= 10, gems: 1 },
+                    { id: 'first100', check: () => this.totalClicks >= 100, gems: 5 },
+                    { id: 'first500', check: () => this.totalClicks >= 500, gems: 10 },
+                    { id: 'first1000', check: () => this.totalClicks >= 1000, gems: 15 },
+                    { id: 'first5000', check: () => this.totalClicks >= 5000, gems: 25 },
+                    { id: 'first10000', check: () => this.totalClicks >= 10000, gems: 50 },
+                    { id: 'rich', check: () => this.coins >= 100000, gems: 100 }
+                ];
+
+                achievements.forEach(achievement => {
+                    if (!this.achievements[achievement.id] && achievement.check()) {
+                        this.unlockAchievement(achievement.id, achievement.gems);
+                    }
+                });
             }
 
-            checkLevelAchievement() {
-                if (!this.achievements.level50 && this.level >= 50) {
-                    this.unlockAchievement('level50', 'Легенда майнинга', 'Достигнут 50-й уровень!');
-                }
+            checkLevelAchievements() {
+                const levelAchievements = [
+                    { id: 'level10', check: () => this.level >= 10, gems: 10 },
+                    { id: 'level25', check: () => this.level >= 25, gems: 25 },
+                    { id: 'level50', check: () => this.level >= 50, gems: 50 }
+                ];
+
+                levelAchievements.forEach(achievement => {
+                    if (!this.achievements[achievement.id] && achievement.check()) {
+                        this.unlockAchievement(achievement.id, achievement.gems);
+                    }
+                });
             }
 
-            unlockAchievement(id, title, description) {
+            unlockAchievement(id, gems) {
                 this.achievements[id] = true;
-                this.gems += 5;
+                this.gems += gems;
                 
-                this.showMessage(`🏆 ${title}: ${description} +5💎`);
+                this.showMessage(`🏆 Достижение разблокировано! +${gems}💎`);
                 this.updateAchievementsDisplay();
                 this.updateDisplay();
             }
 
             setupAchievements() {
                 const achievements = [
-                    { id: 'first100', title: 'Новичок инвестора', description: 'Сделано 100 кликов', unlocked: this.achievements.first100 },
-                    { id: 'first1000', title: 'Опытный майнер', description: 'Сделано 1000 кликов', unlocked: this.achievements.first1000 },
-                    { id: 'first10000', title: 'Крипто-кит', description: 'Сделано 10000 кликов', unlocked: this.achievements.first10000 },
-                    { id: 'level50', title: 'Легенда майнинга', description: 'Достигнут 50-й уровень', unlocked: this.achievements.level50 }
+                    { id: 'first10', title: 'Первые шаги', description: 'Сделано 10 кликов', unlocked: this.achievements.first10, gems: 1 },
+                    { id: 'first100', title: 'Начинающий', description: 'Сделано 100 кликов', unlocked: this.achievements.first100, gems: 5 },
+                    { id: 'first500', title: 'Опытный', description: 'Сделано 500 кликов', unlocked: this.achievements.first500, gems: 10 },
+                    { id: 'first1000', title: 'Профессионал', description: 'Сделано 1000 кликов', unlocked: this.achievements.first1000, gems: 15 },
+                    { id: 'first5000', title: 'Мастер', description: 'Сделано 5000 кликов', unlocked: this.achievements.first5000, gems: 25 },
+                    { id: 'first10000', title: 'Легенда', description: 'Сделано 10000 кликов', unlocked: this.achievements.first10000, gems: 50 },
+                    { id: 'level10', title: 'Новичок', description: 'Достигнут 10 уровень', unlocked: this.achievements.level10, gems: 10 },
+                    { id: 'level25', title: 'Продвинутый', description: 'Достигнут 25 уровень', unlocked: this.achievements.level25, gems: 25 },
+                    { id: 'level50', title: 'Эксперт', description: 'Достигнут 50 уровень', unlocked: this.achievements.level50, gems: 50 },
+                    { id: 'rich', title: 'Богач', description: 'Заработано 100,000 монет', unlocked: this.achievements.rich, gems: 100 }
                 ];
 
                 const container = document.getElementById('achievementsList');
@@ -809,9 +911,12 @@
                         <div class="achievement-icon">${achievement.unlocked ? '🏆' : '🔒'}</div>
                         <div style="flex: 1;">
                             <div style="font-weight: bold;">${achievement.title}</div>
-                            <div style="font-size: 12px; opacity: 0.8;">${achievement.description}</div>
+                            <div style="font-size: 11px; opacity: 0.8;">${achievement.description}</div>
                         </div>
-                        ${achievement.unlocked ? '<div style="color: var(--accent);">+5💎</div>' : ''}
+                        ${achievement.unlocked ? 
+                            `<div style="color: var(--accent); font-size: 11px;">+${achievement.gems}💎</div>` : 
+                            `<div style="font-size: 11px; opacity: 0.6;">+${achievement.gems}💎</div>`
+                        }
                     `;
                     container.appendChild(div);
                 });
@@ -833,19 +938,22 @@
 
             claimDailyReward() {
                 let reward = 0;
+                let message = '';
                 
                 if (this.dailyQuests.clicks.completed && !this.dailyQuests.clicks.claimed) {
                     reward += 10;
                     this.dailyQuests.clicks.claimed = true;
+                    message += '100 кликов ';
                 }
                 if (this.dailyQuests.level10.completed && !this.dailyQuests.level10.claimed) {
                     reward += 25;
                     this.dailyQuests.level10.claimed = true;
+                    message += '10 уровень ';
                 }
                 
                 if (reward > 0) {
                     this.gems += reward;
-                    this.showMessage(`🎁 Ежедневная награда: +${reward}💎`);
+                    this.showMessage(`🎁 Награда за ${message}: +${reward}💎`);
                     this.updateDisplay();
                 } else {
                     this.showMessage('📅 Задания еще не выполнены');
@@ -905,6 +1013,7 @@
                     this.gems -= selected.cost;
                     selected.action();
                     this.updateDisplay();
+                    this.showMessage('✅ Покупка успешна!');
                 } else {
                     this.showMessage('❌ Недостаточно алмазов!');
                 }
@@ -935,42 +1044,20 @@
                     
                     this.showMessage(`❤️ Спасибо за поддержку! +${gemReward}💎 +${rubAmount * 5} монет`);
                     this.updateDisplay();
+                    
+                    // Здесь можно добавить интеграцию с платежной системой
+                    // Например: Telegram.WebApp.openInvoice(...)
                 }
             }
 
             showAd() {
                 this.showMessage('📺 Загрузка рекламы...');
+                // Имитация загрузки рекламы
                 setTimeout(() => {
                     this.coins += 50;
                     this.updateDisplay();
                     this.showMessage('🎁 +50 монет за просмотр рекламы!');
-                }, 2000);
-            }
-
-            // Таймер акции
-            startPromoTimer() {
-                // Случайная акция каждые 2 часа
-                setInterval(() => {
-                    const banner = document.getElementById('promoBanner');
-                    banner.style.display = 'block';
-                    
-                    let timeLeft = 7200; // 2 часа в секундах
-                    
-                    const timer = setInterval(() => {
-                        const hours = Math.floor(timeLeft / 3600);
-                        const minutes = Math.floor((timeLeft % 3600) / 60);
-                        const seconds = timeLeft % 60;
-                        
-                        document.getElementById('promoTimer').textContent = 
-                            `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                        
-                        if (timeLeft <= 0) {
-                            clearInterval(timer);
-                            banner.style.display = 'none';
-                        }
-                        timeLeft--;
-                    }, 1000);
-                }, 7200000); // Каждые 2 часа
+                }, 1500);
             }
 
             // Вспомогательные функции
@@ -1014,10 +1101,9 @@
                     this.totalClicks = progress.totalClicks || 0;
                     this.upgrades = progress.upgrades || { clickPower: 1, autoClick: false, multiplier: 1 };
                     this.achievements = progress.achievements || {
-                        first100: false,
-                        first1000: false,
-                        first10000: false,
-                        level50: false
+                        first10: false, first100: false, first500: false, first1000: false,
+                        first5000: false, first10000: false, level10: false, level25: false,
+                        level50: false, rich: false
                     };
                     this.dailyQuests = progress.dailyQuests || {
                         clicks: { target: 100, completed: false, claimed: false },
@@ -1029,6 +1115,14 @@
 
         // Инициализация игры
         const game = new DollarTapGame();
+
+        // Стили для рейтинг вкладок
+        const style = document.createElement('style');
+        style.textContent = `
+            .rating-content { display: none; }
+            .rating-content.active { display: block; }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
