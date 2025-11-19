@@ -4,11 +4,13 @@
     <title>TON Tap Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org;">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
@@ -16,20 +18,22 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             min-height: 100vh;
-            padding: 15px;
+            padding: 0;
             overflow-x: hidden;
         }
         
         .container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 10px;
+            width: 100%;
+            min-height: 100vh;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
         }
         
         .user-info {
             background: rgba(255,255,255,0.2);
-            padding: 12px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 15px;
             margin-bottom: 15px;
             font-size: 16px;
             backdrop-filter: blur(10px);
@@ -39,7 +43,7 @@
             background: rgba(255,255,255,0.15);
             padding: 15px;
             border-radius: 15px;
-            margin: 12px 0;
+            margin: 10px 0;
             font-size: 18px;
         }
         
@@ -56,13 +60,18 @@
             display: block;
             box-shadow: 0 6px 15px rgba(0,0,0,0.3);
             color: #333;
+            transition: transform 0.1s;
+        }
+        
+        .tap-btn:active {
+            transform: scale(0.95);
         }
         
         .upgrade {
             background: #4CAF50;
             color: white;
             border: none;
-            padding: 14px;
+            padding: 15px;
             border-radius: 12px;
             margin: 8px 0;
             cursor: pointer;
@@ -73,27 +82,15 @@
         
         .section-title {
             font-size: 18px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             text-align: center;
+            font-weight: bold;
         }
         
-        /* Улучшаем отображение в Telegram */
-        @media (max-width: 400px) {
-            .tap-btn {
-                width: 120px;
-                height: 120px;
-                font-size: 20px;
-            }
-            
-            .stats, .user-info {
-                font-size: 16px;
-                padding: 12px;
-            }
-            
-            .upgrade {
-                padding: 12px;
-                font-size: 15px;
-            }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
     </style>
 </head>
@@ -102,31 +99,31 @@
         <!-- Информация о пользователе -->
         <div class="user-info">
             <div id="user-name">👤 Загрузка...</div>
-            <div id="user-balance">💎 Баланс: 0 монет</div>
+            <div id="user-balance">💎 Баланс: <span id="balance-value">0</span> монет</div>
         </div>
         
-        <h1 style="text-align: center; margin-bottom: 15px; font-size: 24px;">💰 TON Tap Game</h1>
+        <h1>💰 TON Tap Game</h1>
         
         <!-- Статистика -->
         <div class="stats">
-            <div id="coins">💎 Монеты: 0</div>
-            <div id="tap-power">⚡ Сила тапа: 1</div>
-            <div id="total-taps">👆 Всего тапов: 0</div>
+            <div id="coins">💎 Монеты: <span id="coins-value">0</span></div>
+            <div id="tap-power">⚡ Сила тапа: <span id="power-value">1</span></div>
+            <div id="total-taps">👆 Всего тапов: <span id="taps-value">0</span></div>
         </div>
         
         <!-- Кнопка тапа -->
-        <button class="tap-btn" onclick="tap()">TAP!</button>
+        <button class="tap-btn" id="tap-button">TAP!</button>
         
         <!-- Улучшения -->
         <div class="stats">
             <div class="section-title">🛠 Улучшения</div>
-            <button class="upgrade" onclick="buyUpgrade(1)">
+            <button class="upgrade" id="upgrade-1">
                 💪 +1 к силе (50 монет)
             </button>
-            <button class="upgrade" onclick="buyUpgrade(2)">
+            <button class="upgrade" id="upgrade-2">
                 🚀 +5 к силе (200 монет)
             </button>
-            <button class="upgrade" onclick="buyUpgrade(3)">
+            <button class="upgrade" id="upgrade-3">
                 ⚡ Автокликер (500 монет)
             </button>
         </div>
@@ -134,10 +131,10 @@
         <!-- Реферальная система -->
         <div class="stats">
             <div class="section-title">👥 Пригласи друзей</div>
-            <button class="upgrade" onclick="shareGame()">
+            <button class="upgrade" id="share-button">
                 📤 Поделиться игрой +100 монет!
             </button>
-<div style="font-size: 14px; text-align: center; margin-top: 8px;">
+            <div style="font-size: 14px; text-align: center; margin-top: 10px;">
                 За каждого друга: +50 монет!
             </div>
         </div>
@@ -145,10 +142,10 @@
         <!-- Магазин -->
         <div class="stats">
             <div class="section-title">💳 Магазин (скоро)</div>
-            <button class="upgrade" style="background: #ff6b6b;" onclick="comingSoon()">
+            <button class="upgrade" style="background: #ff6b6b;" id="shop-1">
                 💰 Купить TON монеты
             </button>
-            <button class="upgrade" style="background: #ff6b6b;" onclick="comingSoon()">
+            <button class="upgrade" style="background: #ff6b6b;" id="shop-2">
                 🏆 VIP статус
             </button>
         </div>
@@ -160,46 +157,88 @@
         let tapPower = 1;
         let totalTaps = 0;
         let autoClicker = false;
+        let autoClickerInterval = null;
         
         // Инициализация Telegram Web App
         let tg = window.Telegram.WebApp;
         
-        function initTelegram() {
+        // Функция инициализации
+        function initGame() {
+            console.log("🚀 Игра запускается...");
+            
             // Растягиваем на весь экран
             tg.expand();
-            tg.enableClosingConfirmation();
             tg.ready();
             
             // Получаем данные пользователя
             const user = tg.initDataUnsafe.user;
             if (user) {
-                document.getElementById('user-name').textContent = 👤 ${user.first_name || 'Игрок'};
+                document.getElementById('user-name').textContent = `👤 ${user.first_name || 'Игрок'}`;
                 loadProgress(user.id);
+            } else {
+                document.getElementById('user-name').textContent = '👤 Гость';
             }
+            
+            // Назначаем обработчики событий
+            setupEventListeners();
             
             // Обновляем интерфейс
             updateUI();
+            
+            console.log("✅ Игра готова!");
+        }
+        
+        function setupEventListeners() {
+            // Кнопка тапа
+            document.getElementById('tap-button').addEventListener('click', tap);
+            
+            // Улучшения
+            document.getElementById('upgrade-1').addEventListener('click', function() {
+                buyUpgrade(1);
+            });
+            document.getElementById('upgrade-2').addEventListener('click', function() {
+                buyUpgrade(2);
+            });
+            document.getElementById('upgrade-3').addEventListener('click', function() {
+                buyUpgrade(3);
+            });
+            
+            // Шеринг
+            document.getElementById('share-button').addEventListener('click', shareGame);
+            
+            // Магазин (заглушки)
+            document.getElementById('shop-1').addEventListener('click', comingSoon);
+            document.getElementById('shop-2').addEventListener('click', comingSoon);
         }
         
         function loadProgress(userId) {
-            const saved = localStorage.getItem(`game_${userId}`);
-            if (saved) {
-                const data = JSON.parse(saved);
-                coins = data.coins || 0;
-                tapPower = data.power || 1;
-                totalTaps = data.taps || 0;
+            try {
+                const saved = localStorage.getItem(`game_${userId}`);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    coins = data.coins || 0;
+                    tapPower = data.power || 1;
+                    totalTaps = data.taps || 0;
+                    console.log("📁 Прогресс загружен:", data);
+                }
+            } catch (e) {
+                console.log("❌ Ошибка загрузки прогресса:", e);
             }
         }
         
         function saveProgress() {
-            const user = tg.initDataUnsafe.user;
-            if (user) {
-                const data = {
-                    coins: coins,
-                    power: tapPower,
-                    taps: totalTaps
-                };
-                localStorage.setItem(`game_${user.id}`, JSON.stringify(data));
+            try {
+                const user = tg.initDataUnsafe.user;
+                if (user) {
+                    const data = {
+                        coins: coins,
+                        power: tapPower,
+                        taps: totalTaps
+                    };
+                    localStorage.setItem(`game_${user.id}`, JSON.stringify(data));
+                }
+            } catch (e) {
+                console.log("❌ Ошибка сохранения:", e);
             }
         }
         
@@ -208,33 +247,45 @@
             totalTaps++;
             updateUI();
             saveProgress();
+            console.log("👆 Тап! Монеты:", coins);
         }
         
         function buyUpgrade(type) {
+            let success = false;
+            let message = '';
+            
             if (type === 1 && coins >= 50) {
                 coins -= 50;
                 tapPower += 1;
-                showNotification('Улучшение куплено! +1 к силе 💪');
+                success = true;
+                message = 'Улучшение куплено! +1 к силе 💪';
             } else if (type === 2 && coins >= 200) {
                 coins -= 200;
                 tapPower += 5;
-                showNotification('Мега улучшение! +5 к силе 🚀');
+                success = true;
+                message = 'Мега улучшение! +5 к силе 🚀';
             } else if (type === 3 && coins >= 500) {
                 coins -= 500;
                 autoClicker = true;
                 startAutoClicker();
-                showNotification('Автокликер активирован! ⚡');
+                success = true;
+                message = 'Автокликер активирован! ⚡';
             } else {
-                showNotification('Недостаточно монет! 😢');
-                return;
+                message = 'Недостаточно монет! 😢';
             }
-            updateUI();
-            saveProgress();
+            
+            if (success) {
+                showNotification(message);
+                updateUI();
+                saveProgress();
+            } else {
+                showNotification(message);
+            }
         }
         
         function startAutoClicker() {
-            if (autoClicker) {
-                setInterval(() => {
+            if (autoClicker && !autoClickerInterval) {
+                autoClickerInterval = setInterval(() => {
                     coins += tapPower;
                     totalTaps++;
                     updateUI();
@@ -245,14 +296,16 @@
         
         function shareGame() {
             const user = tg.initDataUnsafe.user;
-            const refLink = https://t.me/my_game_test_123_bot?start=ref_${user?.id || '0'};
+            const refLink = `https://t.me/my_game_test_123_bot?start=ref_${user?.id || '0'}`;
             
             coins += 100;
             showNotification('+100 монет за распространение! 🎁');
             
-            // Используем Telegram-шеринг
-            if (tg.share) {
-                tg.share(refLink);
+            // Показываем ссылку для копирования
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(refLink).then(() => {
+                    showNotification('Ссылка скопирована! Отправьте другу 📤');
+                });
             } else {
                 prompt('Скопируйте ссылку для друга:', refLink);
             }
@@ -262,12 +315,8 @@
         }
         
         function showNotification(message) {
-            // В будущем можно использовать tg.showAlert
-            tg.showPopup({
-title: 'Уведомление',
-                message: message,
-                buttons: [{ type: 'ok' }]
-            });
+            // Простое уведомление
+            alert(message);
         }
         
         function comingSoon() {
@@ -275,19 +324,22 @@ title: 'Уведомление',
         }
         
         function updateUI() {
-            document.getElementById('coins').textContent = 💎 Монеты: ${coins};
-            document.getElementById('tap-power').textContent = ⚡ Сила тапа: ${tapPower};
-            document.getElementById('total-taps').textContent = 👆 Всего тапов: ${totalTaps};
+            // Обновляем все значения через span
+            document.getElementById('coins-value').textContent = coins;
+            document.getElementById('power-value').textContent = tapPower;
+            document.getElementById('taps-value').textContent = totalTaps;
+            document.getElementById('balance-value').textContent = coins;
             
-            const user = tg.initDataUnsafe.user;
-            if (user) {
-                document.getElementById('user-balance').textContent = 💎 Баланс: ${coins} монет;
-            }
+            console.log("🔄 Интерфейс обновлен");
         }
         
-        // Запускаем когда страница загрузится
-        document.addEventListener('DOMContentLoaded', initTelegram);
+        // Запускаем игру когда всё загрузится
+        document.addEventListener('DOMContentLoaded', initGame);
+        
+        // Дополнительная инициализация для Telegram
+        if (window.Telegram && window.Telegram.WebApp) {
+            Telegram.WebApp.ready();
+        }
     </script>
 </body>
 </html>
-
